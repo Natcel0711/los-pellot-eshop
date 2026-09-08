@@ -9,6 +9,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./js/vendor/three.module.min.js",
+      "three/addons/controls/OrbitControls.js": "./js/vendor/controls/OrbitControls.js"
+    }
+  }
+  </script>
 </head>
 <body class="bg-bg text-white antialiased">
 
@@ -58,32 +66,14 @@
         </div>
       </div>
 
-      <!-- Decorative glowing vehicle mark -->
       <div class="relative hidden lg:flex items-center justify-center">
         <div class="absolute w-[420px] h-[420px] rounded-full bg-blue/15 blur-[100px]"></div>
-        <svg viewBox="0 0 400 220" class="relative w-full max-w-lg drop-shadow-[0_0_40px_rgba(47,94,255,0.35)]">
-          <path d="M20 150 Q20 110 70 100 L110 60 Q140 40 190 40 L260 40 Q300 40 320 70 L350 100 Q380 105 380 140 L380 155 Q380 165 368 165 L345 165 Q340 180 322 180 Q304 180 299 165 L140 165 Q135 180 117 180 Q99 180 94 165 L32 165 Q20 165 20 150 Z"
-                fill="none" stroke="#6f95ff" stroke-width="2.5" opacity="0.85"/>
-          <path d="M110 60 L150 60 L165 100 L95 100 Z" fill="none" stroke="#6f95ff" stroke-width="1.5" opacity="0.5"/>
-          <path d="M180 58 L255 58 L268 100 L172 100 Z" fill="none" stroke="#6f95ff" stroke-width="1.5" opacity="0.5"/>
-          <circle cx="99" cy="165" r="17" fill="none" stroke="#c9d0dc" stroke-width="2.5"/>
-          <circle cx="322" cy="165" r="17" fill="none" stroke="#c9d0dc" stroke-width="2.5"/>
-          <ellipse cx="345" cy="95" rx="16" ry="9" fill="#6f95ff" opacity="0.9"/>
-          <ellipse cx="345" cy="95" rx="26" ry="15" fill="#2f5eff" opacity="0.25"/>
-        </svg>
-        <div class="absolute top-8 right-8 flex items-center gap-2 bg-surface/90 border border-white/10 rounded-xl px-3 py-2 text-xs backdrop-blur">
-          <span class="w-2 h-2 rounded-full bg-blue-glow animate-pulse"></span> 100% Compatible
+        <div class="relative flex items-center justify-center w-full max-w-lg h-[360px] rounded-2xl border border-white/10 bg-surface/40 overflow-hidden shadow-[0_0_30px_rgba(47,94,255,0.15)]">
+          <img src="assets/logo.png" alt="Los Pellot LED" class="w-[72%] max-w-[360px] drop-shadow-[0_0_24px_rgba(111,149,255,0.35)]" />
         </div>
       </div>
     </div>
 
-    <!-- Brand marquee -->
-    <div class="border-t border-white/5 bg-surface/60 py-4 overflow-hidden">
-      <div class="flex marquee-track gap-16 text-muted text-sm font-display tracking-[0.25em] font-semibold">
-        <span>TOYOTA</span><span>HONDA</span><span>FORD</span><span>JEEP</span><span>CHEVROLET</span><span>RAM</span>
-        <span>TOYOTA</span><span>HONDA</span><span>FORD</span><span>JEEP</span><span>CHEVROLET</span><span>RAM</span>
-      </div>
-    </div>
   </section>
 
   <!-- ======================== VEHICLE FINDER PANEL ======================== -->
@@ -174,12 +164,12 @@
         <p class="font-semibold text-sm text-white">Instalación Experta</p>
         <p class="text-xs text-muted mt-1">Técnicos certificados.</p>
       </div>
-      <div class="bg-surface border border-white/10 rounded-xl p-5 mt-6">
+      <div class="bg-surface border border-white/10 rounded-xl p-5">
         <div class="text-blue-glow mb-3"><span data-icon="shield" data-icon-cls="w-6 h-6"></span></div>
         <p class="font-semibold text-sm text-white">Trabajo Garantizado</p>
         <p class="text-xs text-muted mt-1">Respaldamos cada instalación.</p>
       </div>
-      <div class="bg-surface border border-white/10 rounded-xl p-5 -mt-6">
+      <div class="bg-surface border border-white/10 rounded-xl p-5">
         <div class="text-blue-glow mb-3"><span data-icon="bolt" data-icon-cls="w-6 h-6"></span></div>
         <p class="font-semibold text-sm text-white">Diagnóstico Rápido</p>
         <p class="text-xs text-muted mt-1">Te decimos qué necesitas.</p>

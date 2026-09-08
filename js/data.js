@@ -114,52 +114,112 @@ function categoryName(id) {
   return c ? c.name : id;
 }
 
-/* Wires up a Year → Make → Model → Trim cascading select group. */
+/* Wires up a flexible Year/Make/Model/Trim selector group where any field may be selected first. */
 function wireVehicleSelectors({ yearEl, makeEl, modelEl, trimEl, initial = {} }) {
   const years = Object.keys(VEHICLES).sort((a, b) => b - a);
 
   function fill(el, options, placeholder) {
+    const unique = [...new Set(options)];
     el.innerHTML = `<option value="">${placeholder}</option>` +
-      options.map(o => `<option value="${o}">${o}</option>`).join("");
-    el.disabled = options.length === 0;
+      unique.map(o => `<option value="${o}">${o}</option>`).join("");
+    el.disabled = unique.length === 0;
+    if (el.value && !unique.includes(el.value)) el.value = "";
   }
 
-  fill(yearEl, years, "Año");
-  fill(makeEl, [], "Marca");
-  fill(modelEl, [], "Modelo");
-  if (trimEl) fill(trimEl, [], "Trim / Versión");
+  function selectedValues() {
+    return {
+      year: yearEl.value || "",
+      make: makeEl.value || "",
+      model: modelEl.value || "",
+    };
+  }
 
-  yearEl.addEventListener("change", () => {
-    const makes = yearEl.value ? Object.keys(VEHICLES[yearEl.value]) : [];
-    fill(makeEl, makes, "Marca");
-    fill(modelEl, [], "Modelo");
-    if (trimEl) fill(trimEl, [], "Trim / Versión");
-  });
-
-  makeEl.addEventListener("change", () => {
-    const models = (yearEl.value && makeEl.value) ? Object.keys(VEHICLES[yearEl.value][makeEl.value]) : [];
-    fill(modelEl, models, "Modelo");
-    if (trimEl) fill(trimEl, [], "Trim / Versión");
-  });
-
-  if (trimEl) {
-    modelEl.addEventListener("change", () => {
-      const trims = (yearEl.value && makeEl.value && modelEl.value) ? VEHICLES[yearEl.value][makeEl.value][modelEl.value] : [];
-      fill(trimEl, trims, "Trim / Versión");
+  function getAvailableYears() {
+    const { make, model } = selectedValues();
+    return years.filter((year) => {
+      if (make && !Object.prototype.hasOwnProperty.call(VEHICLES[year], make)) return false;
+      if (model) {
+        const matchingModel = Object.keys(VEHICLES[year] || {}).some((currentMake) => {
+          if (make && currentMake !== make) return false;
+          return Object.prototype.hasOwnProperty.call(VEHICLES[year][currentMake], model);
+        });
+        if (!matchingModel) return false;
+      }
+      return true;
     });
   }
 
-  if (initial.year) {
-    yearEl.value = initial.year;
-    yearEl.dispatchEvent(new Event("change"));
-    if (initial.make) {
-      makeEl.value = initial.make;
-      makeEl.dispatchEvent(new Event("change"));
-      if (initial.model) {
-        modelEl.value = initial.model;
-        modelEl.dispatchEvent(new Event("change"));
-        if (trimEl && initial.trim) trimEl.value = initial.trim;
+  function getAvailableMakes() {
+    const { year, model } = selectedValues();
+    const results = new Set();
+    for (const currentYear of years) {
+      if (year && currentYear !== year) continue;
+      for (const currentMake of Object.keys(VEHICLES[currentYear] || {})) {
+        if (model && !Object.prototype.hasOwnProperty.call(VEHICLES[currentYear][currentMake], model)) continue;
+        results.add(currentMake);
       }
+    }
+    return [...results].sort((a, b) => a.localeCompare(b));
+  }
+
+  function getAvailableModels() {
+    const { year, make } = selectedValues();
+    const results = new Set();
+    for (const currentYear of years) {
+      if (year && currentYear !== year) continue;
+      for (const currentMake of Object.keys(VEHICLES[currentYear] || {})) {
+        if (make && currentMake !== make) continue;
+        Object.keys(VEHICLES[currentYear][currentMake] || {}).forEach(model => results.add(model));
+      }
+    }
+    return [...results].sort((a, b) => a.localeCompare(b));
+  }
+
+  function refreshSelections() {
+    const { year, make, model } = selectedValues();
+
+    const availableYears = getAvailableYears();
+    const availableMakes = getAvailableMakes();
+    const availableModels = getAvailableModels();
+
+    fill(yearEl, availableYears, "Año");
+    fill(makeEl, availableMakes, "Marca");
+    fill(modelEl, availableModels, "Modelo");
+
+    if (year && availableYears.includes(year)) yearEl.value = year;
+    else yearEl.value = "";
+
+    if (make && availableMakes.includes(make)) makeEl.value = make;
+    else makeEl.value = "";
+
+    if (model && availableModels.includes(model)) modelEl.value = model;
+    else modelEl.value = "";
+
+    if (trimEl) {
+      const trims = (yearEl.value && makeEl.value && modelEl.value)
+        ? VEHICLES[yearEl.value][makeEl.value][modelEl.value]
+        : [];
+      fill(trimEl, trims, "Trim / Versión");
+      if (trimEl.value && !trims.includes(trimEl.value)) trimEl.value = "";
+    }
+  }
+
+  fill(yearEl, years, "Año");
+  fill(makeEl, [...new Set(years.flatMap(year => Object.keys(VEHICLES[year])))], "Marca");
+  fill(modelEl, [...new Set(years.flatMap(year => Object.keys(VEHICLES[year]).flatMap(make => Object.keys(VEHICLES[year][make]))))], "Modelo");
+  if (trimEl) fill(trimEl, [], "Trim / Versión");
+
+  [yearEl, makeEl, modelEl].forEach((el) => {
+    el.addEventListener("change", refreshSelections);
+  });
+
+  if (initial.year || initial.make || initial.model) {
+    yearEl.value = initial.year || "";
+    makeEl.value = initial.make || "";
+    modelEl.value = initial.model || "";
+    refreshSelections();
+    if (trimEl && initial.trim) {
+      trimEl.value = initial.trim;
     }
   }
 }
