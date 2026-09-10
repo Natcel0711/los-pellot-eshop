@@ -47,7 +47,7 @@ function headerHTML(active) {
           <button id="search-toggle" class="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition" aria-label="Buscar" title="Buscar">
             ${icon("search", "w-5 h-5")}
           </button>
-          <button class="w-9 h-9 hidden sm:flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition" aria-label="Cuenta" title="Mi Cuenta">
+          <button id="account-toggle" class="w-9 h-9 hidden sm:flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition" aria-label="Cuenta" title="Mi Cuenta">
             ${icon("user", "w-5 h-5")}
           </button>
           <button id="cart-toggle" class="relative w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition" aria-label="Carrito">
@@ -72,6 +72,9 @@ function headerHTML(active) {
 
     <div id="mobile-menu" class="hidden lg:hidden border-t border-white/5 bg-surface">
       ${mobileLinks}
+      <button id="account-toggle-mobile" class="block w-full px-5 py-3 text-sm font-semibold tracking-wide text-muted" style="text-align:left">
+        INICIAR SESIÓN
+      </button>
     </div>
   </header>`;
 }
@@ -177,4 +180,5 @@ function mountChrome(active) {
   wireChromeEvents();
   updateCartCount();
   renderCartDrawer();
+  if (typeof mountAccountUI === "function") mountAccountUI();
 }
