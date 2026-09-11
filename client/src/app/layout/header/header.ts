@@ -44,9 +44,4 @@ export class Header {
   onAccountClick(): void {
     this.ui.openAccountModal(this.auth.isLoggedIn ? 'profile' : 'login');
   }
-
-  onMobileAccountClick(): void {
-    this.ui.closeMobileMenu();
-    this.onAccountClick();
-  }
 }
