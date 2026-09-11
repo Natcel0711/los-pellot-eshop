@@ -1,0 +1,113 @@
+<section class="border-b border-white/5 bg-surface/40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="font-display text-4xl font-bold tracking-wide">CHECKOUT</h1>
+    <div class="flex items-center gap-2 mt-3 text-xs text-muted">
+      <span class="text-blue-glow font-semibold">Carrito</span> <span>→</span>
+      <span class="text-blue-glow font-semibold">Envío &amp; Pago</span> <span>→</span>
+      <span>Confirmación</span>
+    </div>
+  </div>
+</section>
+
+@if (confirmedOrder(); as order) {
+  <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+    <div class="w-16 h-16 rounded-full bg-blue/15 border border-blue/30 flex items-center justify-center text-blue-glow mx-auto mb-5">
+      <app-icon name="check" class="w-7 h-7" />
+    </div>
+    <h2 class="font-display text-3xl font-bold">¡Gracias por tu compra!</h2>
+    <p class="text-sm text-muted mt-2">
+      Tu orden <span class="text-white font-semibold">#{{ order.orderNumber }}</span> ha sido recibida. Te enviaremos un correo con los detalles y el tracking.
+    </p>
+    <a routerLink="/" class="inline-block mt-7 px-7 py-3 rounded-full bg-blue hover:bg-blue-dark font-semibold transition">Volver al Inicio</a>
+  </section>
+} @else if ((cart.cart$ | async)?.lines?.length === 0) {
+  <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+    <div class="w-16 h-16 rounded-full bg-surface-2 flex items-center justify-center text-muted mx-auto mb-5"><app-icon name="cart" class="w-7 h-7" /></div>
+    <p class="text-white font-semibold">Tu carrito está vacío</p>
+    <p class="text-sm text-muted mt-1 mb-6">Añade productos antes de continuar al checkout.</p>
+    <a routerLink="/products" class="inline-block px-7 py-3 rounded-full bg-blue hover:bg-blue-dark font-semibold transition">Ver Productos</a>
+  </section>
+} @else if ((cart.cart$ | async); as liveCart) {
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <form class="grid lg:grid-cols-[1fr_400px] gap-8" #form (submit)="$event.preventDefault(); submit(form)">
+      <div class="space-y-8">
+        <div class="bg-surface border border-white/10 rounded-2xl p-6">
+          <h2 class="font-display text-xl font-bold tracking-wide mb-5">TU PEDIDO</h2>
+          <div class="divide-y divide-white/5">
+            @for (line of liveCart.lines; track line.key) {
+              <div class="flex items-center gap-4 py-4">
+                <div class="w-14 h-14 shrink-0 rounded-lg bg-surface-2 border border-white/5 flex items-center justify-center text-blue-glow">
+                  <app-icon [name]="categoryIcon(line.product.category)" class="w-6 h-6" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-white truncate">{{ line.product.name }}</p>
+                  <p class="text-xs text-muted mt-0.5">
+                    {{ categoryName(line.product.category) }}{{ line.vehicleLabel ? ' · ' + line.vehicleLabel : '' }} · Cant. {{ line.qty }}
+                  </p>
+                </div>
+                <p class="text-sm font-bold text-white shrink-0">{{ line.lineTotal | currency }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="bg-surface border border-white/10 rounded-2xl p-6">
+          <h2 class="font-display text-xl font-bold tracking-wide mb-5">INFORMACIÓN DE ENVÍO</h2>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div class="sm:col-span-2"><label class="text-xs font-semibold text-muted">Nombre completo</label><input name="name" required type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">Correo electrónico</label><input name="email" required type="email" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">Teléfono</label><input name="phone" required type="tel" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div class="sm:col-span-2"><label class="text-xs font-semibold text-muted">Dirección</label><input name="address" required type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div class="sm:col-span-2"><label class="text-xs font-semibold text-muted">Apartamento / Suite (opcional)</label><input name="apt" type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">Ciudad</label><input name="city" required type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">Estado</label><input name="state" required type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">Código Postal</label><input name="zip" required type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div>
+              <label class="text-xs font-semibold text-muted">País / Territorio</label>
+              <select name="country" required class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue">
+                <option>Puerto Rico</option>
+                <option>Estados Unidos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-surface border border-white/10 rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="font-display text-xl font-bold tracking-wide">PAGO</h2>
+            <span class="flex items-center gap-1.5 text-[11px] text-muted"><span class="text-blue-glow"><app-icon name="shield" class="w-4 h-4" /></span> Pago seguro</span>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div class="sm:col-span-2"><label class="text-xs font-semibold text-muted">Nombre en la tarjeta</label><input name="cardName" required type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div class="sm:col-span-2"><label class="text-xs font-semibold text-muted">Número de tarjeta</label><input name="cardNumber" required inputmode="numeric" maxlength="19" placeholder="0000 0000 0000 0000" type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">Vencimiento</label><input name="expiry" required placeholder="MM/AA" type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+            <div><label class="text-xs font-semibold text-muted">CVC</label><input name="cvc" required inputmode="numeric" maxlength="4" placeholder="123" type="text" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue" /></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="bg-surface border border-white/10 rounded-2xl p-6 h-fit lg:sticky lg:top-28">
+        <h2 class="font-display text-xl font-bold tracking-wide mb-5">RESUMEN</h2>
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center justify-between text-muted"><span>Subtotal</span><span class="text-white font-medium">{{ liveCart.subtotal | currency }}</span></div>
+          <div class="flex items-center justify-between text-muted">
+            <span>Envío</span>
+            <span class="text-white font-medium">{{ shipping(liveCart.subtotal) === 0 ? 'Gratis' : (shipping(liveCart.subtotal) | currency) }}</span>
+          </div>
+        </div>
+        <div class="border-t border-white/10 mt-4 pt-4 flex items-center justify-between">
+          <span class="font-semibold">Total</span>
+          <span class="font-display text-2xl font-bold text-white">{{ liveCart.subtotal + shipping(liveCart.subtotal) | currency }}</span>
+        </div>
+        <p class="text-[11px] text-blue-glow mt-2">{{ freeShippingNote(liveCart.subtotal) }}</p>
+        @if (error()) {
+          <p class="text-xs text-amber mt-3">{{ error() }}</p>
+        }
+        <button type="submit" [disabled]="submitting()" class="w-full mt-6 py-3.5 rounded-full bg-blue hover:bg-blue-dark font-semibold transition glow-ring disabled:opacity-60">
+          {{ submitting() ? 'Procesando…' : 'Finalizar Compra' }}
+        </button>
+        <p class="text-[11px] text-muted mt-3 text-center">Al finalizar aceptas nuestros términos de venta.</p>
+      </aside>
+    </form>
+  </section>
+}

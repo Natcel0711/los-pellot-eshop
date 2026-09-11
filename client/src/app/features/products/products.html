@@ -1,0 +1,151 @@
+<section class="border-b border-white/5 bg-surface/40">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="font-display text-4xl font-bold tracking-wide">PRODUCTOS</h1>
+    <p class="text-sm text-muted mt-2">LEDs y accesorios para tu vehículo — filtra por vehículo o categoría.</p>
+  </div>
+</section>
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid lg:grid-cols-[260px_1fr] gap-10">
+  <aside>
+    <button
+      class="lg:hidden w-full flex items-center justify-between bg-surface border border-white/10 rounded-xl px-4 py-3 mb-4"
+      (click)="toggleFiltersPanel()"
+    >
+      <span class="text-sm font-semibold">Filtros</span>
+      <app-icon name="chevronDown" class="w-4 h-4" />
+    </button>
+
+    <div class="space-y-8 lg:sticky lg:top-28 lg:block" [class.hidden]="!filtersPanelOpen">
+      <div>
+        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">TU VEHÍCULO</h3>
+        <div class="space-y-2">
+          <select
+            [(ngModel)]="year"
+            (ngModelChange)="onYearChange()"
+            class="w-full bg-surface border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue"
+          >
+            <option value="">Año</option>
+            @for (y of years; track y) {
+              <option [value]="y">{{ y }}</option>
+            }
+          </select>
+          <select
+            [(ngModel)]="make"
+            (ngModelChange)="onMakeChange()"
+            [disabled]="makes.length === 0"
+            class="w-full bg-surface border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue"
+          >
+            <option value="">Marca</option>
+            @for (m of makes; track m) {
+              <option [value]="m">{{ m }}</option>
+            }
+          </select>
+          <select
+            [(ngModel)]="model"
+            (ngModelChange)="onModelChange()"
+            [disabled]="models.length === 0"
+            class="w-full bg-surface border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue"
+          >
+            <option value="">Modelo</option>
+            @for (m of models; track m) {
+              <option [value]="m">{{ m }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">CATEGORÍA</h3>
+        <div class="space-y-1">
+          @for (category of categories(); track category.id) {
+            <label class="flex items-center gap-2 text-sm text-muted hover:text-white cursor-pointer py-1">
+              <input
+                type="checkbox"
+                class="accent-blue w-4 h-4 rounded"
+                [checked]="isCategoryChecked(category.id)"
+                (change)="toggleCategory(category.id, $any($event.target).checked)"
+              />
+              {{ category.name }}
+            </label>
+          }
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">DISPONIBILIDAD</h3>
+        <label class="flex items-center gap-2 text-sm text-muted">
+          <input
+            type="checkbox"
+            class="accent-blue w-4 h-4 rounded"
+            [(ngModel)]="saleOnly"
+            (ngModelChange)="onSaleOnlyChange()"
+          /> Solo ofertas
+        </label>
+      </div>
+
+      <button class="text-xs text-blue-glow hover:text-white transition" (click)="clearAll()">Limpiar todos los filtros</button>
+    </div>
+  </aside>
+
+  <div>
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <p class="text-sm text-muted">
+        @if (loaded()) {
+          Mostrando {{ products().length }} producto{{ products().length === 1 ? '' : 's' }}
+        } @else {
+          Cargando productos…
+        }
+      </p>
+      <div class="flex items-center gap-3">
+        <label for="sort" class="text-xs text-muted">Ordenar por</label>
+        <select
+          id="sort"
+          [(ngModel)]="sort"
+          (ngModelChange)="onSortChange()"
+          class="bg-surface border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue"
+        >
+          <option value="relevance">Relevancia</option>
+          <option value="price-asc">Precio: Menor a Mayor</option>
+          <option value="price-desc">Precio: Mayor a Menor</option>
+          <option value="name-asc">Nombre: A–Z</option>
+        </select>
+      </div>
+    </div>
+
+    @if (chips.length > 0) {
+      <div class="flex flex-wrap gap-2 mb-6">
+        @for (chip of chips; track chip.label) {
+          <button
+            class="inline-flex items-center gap-1.5 text-xs bg-surface-2 border border-white/10 rounded-full pl-3 pr-2 py-1.5 text-white hover:border-blue/40 transition"
+            (click)="chip.clear()"
+          >
+            {{ chip.label }} <app-icon name="close" class="w-3 h-3" />
+          </button>
+        }
+      </div>
+    }
+
+    @if (vehicleSelected) {
+      <div class="flex items-center gap-3 bg-blue/10 border border-blue/30 rounded-xl px-4 py-3 mb-6 text-sm">
+        <span class="text-blue-glow"><app-icon name="check" class="w-4 h-4" /></span>
+        <span>Mostrando compatibilidad para tu {{ vehicleLabel }}</span>
+      </div>
+    }
+
+    @if (loaded() && products().length === 0) {
+      <div class="text-center py-24">
+        <div class="w-16 h-16 rounded-full bg-surface-2 flex items-center justify-center text-muted mx-auto mb-4">
+          <app-icon name="search" class="w-7 h-7" />
+        </div>
+        <p class="text-white font-semibold">No encontramos productos con esos filtros</p>
+        <p class="text-sm text-muted mt-1">Intenta ajustar o limpiar los filtros.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
+        @for (product of products(); track product.id) {
+          <app-product-card [product]="product" [vehicleLabel]="vehicleLabel" />
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,39 @@
+<div class="group bg-surface border border-white/10 rounded-2xl overflow-hidden hover:border-blue/40 glow-ring transition flex flex-col">
+  <div class="relative h-36 sm:h-40 bg-linear-to-br from-surface-2 to-bg flex items-center justify-center">
+    <div class="absolute w-24 h-24 rounded-full bg-blue/25 blur-2xl"></div>
+    <div class="relative text-blue-glow group-hover:text-white transition">
+      <app-icon [name]="categoryIcon(product.category)" class="w-12 h-12" />
+    </div>
+    @if (product.badge) {
+      <span class="absolute top-3 left-3 text-[10px] font-bold tracking-wide px-2 py-1 rounded-full" [class]="badgeClasses(product.badge)">
+        {{ product.badge.toUpperCase() }}
+      </span>
+    }
+  </div>
+  <div class="p-4 flex flex-col flex-1">
+    <p class="text-[11px] text-muted font-semibold tracking-wide uppercase">{{ categoryName }}</p>
+    <h3 class="text-sm font-semibold text-white mt-1 leading-snug min-h-10">{{ product.name }}</h3>
+    <div class="flex items-center gap-2 mt-2 text-[11px] text-muted">
+      <span>{{ product.lumens }} lúmenes</span><span>·</span><span>{{ product.warranty }} garantía</span>
+    </div>
+    @if (vehicleLabel) {
+      <p class="text-[11px] text-blue-glow mt-1">Compatible con tu vehículo</p>
+    }
+    <div class="mt-auto pt-4 flex items-center justify-between">
+      <div class="flex items-baseline gap-2">
+        <span class="text-lg font-bold text-white">{{ price | currency }}</span>
+        @if (onSale) {
+          <span class="text-xs text-muted line-through">{{ product.price | currency }}</span>
+        }
+      </div>
+      <button
+        class="w-9 h-9 rounded-full bg-blue hover:bg-blue-dark flex items-center justify-center transition"
+        aria-label="Agregar al carrito"
+        title="Agregar al carrito"
+        (click)="addToCart($event)"
+      >
+        <app-icon name="plus" class="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+</div>

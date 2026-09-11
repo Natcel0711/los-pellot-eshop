@@ -1,0 +1,17 @@
+# .NET
+server/**/bin/
+server/**/obj/
+*.user
+
+# SQLite dev database
+server/**/*.db
+server/**/*.db-shm
+server/**/*.db-wal
+
+# IDEs and editors
+.vs/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db

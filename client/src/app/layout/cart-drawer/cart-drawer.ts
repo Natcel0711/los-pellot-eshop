@@ -1,0 +1,40 @@
+import { AsyncPipe, CurrencyPipe } from '@angular/common';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { Icon } from '../../shared/icon/icon';
+import { categoryIcon } from '../../shared/category-icons';
+import { Cart } from '../../core/services/cart';
+import { UiState } from '../../core/services/ui-state';
+import { Catalog } from '../../core/services/catalog';
+import { CartLine, Category } from '../../shared/models';
+
+@Component({
+  selector: 'app-cart-drawer',
+  imports: [AsyncPipe, CurrencyPipe, RouterLink, Icon],
+  styleUrl: './cart-drawer.css',
+  templateUrl: './cart-drawer.html',
+})
+export class CartDrawer implements OnInit {
+  protected readonly cart = inject(Cart);
+  protected readonly ui = inject(UiState);
+  private readonly catalog = inject(Catalog);
+
+  protected readonly categoryIcon = categoryIcon;
+  private readonly categories = signal<Category[]>([]);
+
+  ngOnInit(): void {
+    this.catalog.getCategories().subscribe((categories) => this.categories.set(categories));
+  }
+
+  categoryName(categoryId: string): string {
+    return this.categories().find((c) => c.id === categoryId)?.name ?? categoryId;
+  }
+
+  changeQty(line: CartLine, delta: number): void {
+    this.cart.setQty(line.key, line.qty + delta).subscribe();
+  }
+
+  remove(line: CartLine): void {
+    this.cart.removeFromCart(line.key).subscribe();
+  }
+}
