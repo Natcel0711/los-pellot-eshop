@@ -30,7 +30,7 @@
 
       <div class="flex items-center gap-4">
         <button
-          class="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition"
+          class="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition"
           aria-label="Buscar"
           title="Buscar"
           (click)="ui.toggleSearchBar()"
@@ -39,7 +39,7 @@
         </button>
 
         <button
-          class="w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition"
+          class="w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition"
           aria-label="Cuenta"
           [title]="(auth.currentUser$ | async)?.fullName || 'Mi Cuenta'"
           (click)="onAccountClick()"
@@ -54,7 +54,7 @@
         </button>
 
         <button
-          class="relative w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 transition"
+          class="relative w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition"
           aria-label="Carrito"
           (click)="ui.openCartDrawer()"
         >
@@ -69,7 +69,7 @@
         </button>
 
         <button
-          class="lg:hidden w-9 h-9 flex items-center justify-center rounded-full text-white"
+          class="lg:hidden w-9 h-9 flex items-center justify-center rounded-full text-white active:bg-white/10 active:scale-90 transition"
           aria-label="Menú"
           (click)="ui.toggleMobileMenu()"
         >
@@ -103,7 +103,7 @@
           routerLinkActive="text-white bg-white/5"
           [routerLinkActiveOptions]="{ exact: link.path === '/' }"
           (click)="ui.closeMobileMenu()"
-          class="block px-5 py-3 text-sm font-semibold tracking-wide border-b border-white/5 text-muted"
+          class="block px-5 py-3 text-sm font-semibold tracking-wide border-b border-white/5 text-muted active:bg-white/10 transition"
         >
           {{ link.label.toUpperCase() }}
         </a>
