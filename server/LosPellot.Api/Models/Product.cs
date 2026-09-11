@@ -12,6 +12,7 @@ public class Product
     public string Warranty { get; set; } = string.Empty;
     public string? Badge { get; set; }
     public bool IsUniversal { get; set; }
+    public int StockQuantity { get; set; }
 
     public List<ProductFitment> Fitments { get; set; } = [];
 }

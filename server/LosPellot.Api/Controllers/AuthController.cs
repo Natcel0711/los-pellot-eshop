@@ -125,5 +125,5 @@ public class AuthController(
     }
 
     private static UserDto ToDto(ApplicationUser user) =>
-        new(user.Id, user.FullName, user.Email ?? "", user.CreatedAt);
+        new(user.Id, user.FullName, user.Email ?? "", user.CreatedAt, user.IsAdmin);
 }

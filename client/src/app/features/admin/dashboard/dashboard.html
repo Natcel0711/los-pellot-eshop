@@ -1,0 +1,43 @@
+<h1 class="font-display text-3xl font-bold tracking-wide text-white mb-6">PANEL DE ADMINISTRACIÓN</h1>
+
+@if (dashboard(); as d) {
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <a routerLink="/admin/products" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="headlight" class="w-5 h-5 text-blue-glow" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.productCount }}</p>
+      <p class="text-xs text-muted mt-1">Productos</p>
+    </a>
+    <a routerLink="/admin/inventory" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="bar" class="w-5 h-5" [class.text-amber]="d.lowStockCount > 0" [class.text-blue-glow]="d.lowStockCount === 0" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.lowStockCount }}</p>
+      <p class="text-xs text-muted mt-1">Bajo inventario (&lt;10)</p>
+    </a>
+    <a routerLink="/admin/categories" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="controller" class="w-5 h-5 text-blue-glow" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.categoryCount }}</p>
+      <p class="text-xs text-muted mt-1">Categorías</p>
+    </a>
+    <a routerLink="/admin/users" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="user" class="w-5 h-5 text-blue-glow" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.userCount }}</p>
+      <p class="text-xs text-muted mt-1">Usuarios</p>
+    </a>
+    <a routerLink="/admin/orders" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="cart" class="w-5 h-5 text-blue-glow" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.orderCount }}</p>
+      <p class="text-xs text-muted mt-1">Órdenes</p>
+    </a>
+    <a routerLink="/admin/bookings" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="calendar" class="w-5 h-5" [class.text-amber]="d.pendingBookingCount > 0" [class.text-blue-glow]="d.pendingBookingCount === 0" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.pendingBookingCount }}</p>
+      <p class="text-xs text-muted mt-1">Citas pendientes</p>
+    </a>
+    <a routerLink="/admin/contact" class="bg-surface border border-white/10 rounded-xl p-5 hover:border-blue/40 transition">
+      <app-icon name="mail" class="w-5 h-5" [class.text-amber]="d.unhandledContactCount > 0" [class.text-blue-glow]="d.unhandledContactCount === 0" />
+      <p class="font-display text-3xl font-bold text-white mt-3">{{ d.unhandledContactCount }}</p>
+      <p class="text-xs text-muted mt-1">Mensajes sin atender</p>
+    </a>
+  </div>
+} @else {
+  <p class="text-sm text-muted">Cargando…</p>
+}

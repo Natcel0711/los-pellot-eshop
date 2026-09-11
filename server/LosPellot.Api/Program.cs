@@ -63,7 +63,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("is_admin", "true"));
+});
 
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<CartResolver>();
@@ -93,6 +96,9 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
     await SeedData.EnsureSeededAsync(db);
+
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    await SeedData.EnsureAdminUserAsync(userManager);
 }
 
 // Configure the HTTP request pipeline.

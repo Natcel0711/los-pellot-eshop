@@ -21,9 +21,9 @@
     }
     <div class="mt-auto pt-4 flex items-center justify-between">
       <div class="flex items-baseline gap-2">
-        <span class="text-lg font-bold text-white">{{ price | currency }}</span>
+        <span class="text-lg font-bold text-white">{{ price | currency:'USD':'symbol':'1.2-2':'en-US' }}</span>
         @if (onSale) {
-          <span class="text-xs text-muted line-through">{{ product.price | currency }}</span>
+          <span class="text-xs text-muted line-through">{{ product.price | currency:'USD':'symbol':'1.2-2':'en-US' }}</span>
         }
       </div>
       <button

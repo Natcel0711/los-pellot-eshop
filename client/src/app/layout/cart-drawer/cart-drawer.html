@@ -55,7 +55,7 @@
                     (click)="changeQty(line, 1)"
                   ><app-icon name="plus" class="w-3.5 h-3.5" /></button>
                 </div>
-                <span class="text-sm font-bold text-white">{{ line.lineTotal | currency }}</span>
+                <span class="text-sm font-bold text-white">{{ line.lineTotal | currency:'USD':'symbol':'1.2-2':'en-US' }}</span>
               </div>
             </div>
             <button
@@ -75,7 +75,7 @@
         <span>Envío</span><span>Se calcula al finalizar</span>
       </div>
       <div class="flex items-center justify-between text-lg font-bold text-white">
-        <span>Subtotal</span><span>{{ (cart.cart$ | async)?.subtotal | currency }}</span>
+        <span>Subtotal</span><span>{{ (cart.cart$ | async)?.subtotal | currency:'USD':'symbol':'1.2-2':'en-US' }}</span>
       </div>
       <a
         routerLink="/checkout"

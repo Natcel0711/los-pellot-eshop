@@ -1,6 +1,10 @@
-<app-header />
+@if (!isAdminRoute()) {
+  <app-header />
+}
 <router-outlet />
-<app-footer />
-<app-cart-drawer />
+@if (!isAdminRoute()) {
+  <app-footer />
+  <app-cart-drawer />
+}
 <app-account-modal />
 <app-toast-host />

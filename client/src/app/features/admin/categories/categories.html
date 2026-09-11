@@ -1,0 +1,106 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="font-display text-3xl font-bold tracking-wide text-white">CATEGORÍAS</h1>
+  <button
+    class="px-4 py-2.5 rounded-full bg-blue hover:bg-blue-dark text-sm font-semibold transition flex items-center gap-2"
+    (click)="startCreate()"
+  >
+    <app-icon name="plus" class="w-4 h-4" /> Nueva categoría
+  </button>
+</div>
+
+@if (showForm()) {
+  <div class="bg-surface border border-white/10 rounded-2xl p-6 mb-6">
+    <h2 class="font-display text-lg font-bold text-white mb-4">{{ editing() ? 'EDITAR CATEGORÍA' : 'NUEVA CATEGORÍA' }}</h2>
+    <form class="grid sm:grid-cols-2 gap-4" #form (submit)="$event.preventDefault(); submit(form)">
+      <div>
+        <label class="text-xs font-semibold text-muted">Id</label>
+        <input name="id" required [value]="editing()?.id ?? ''" [readOnly]="!!editing()" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm read-only:opacity-60 focus:outline-none focus:border-blue" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-muted">Nombre</label>
+        <input name="name" required [value]="editing()?.name ?? ''" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-muted">Ícono (nombre)</label>
+        <input name="iconName" required [value]="editing()?.iconName ?? ''" placeholder="headlight, bolt, cart…" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-muted">Bombilla por defecto</label>
+        <input name="defaultBulbType" required [value]="editing()?.defaultBulbType ?? ''" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-muted">Orden</label>
+        <input name="sortOrder" type="number" required [value]="editing()?.sortOrder ?? 0" class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue" />
+      </div>
+
+      @if (error()) {
+        <p class="sm:col-span-2 text-xs text-amber">{{ error() }}</p>
+      }
+
+      <div class="sm:col-span-2 flex gap-3 mt-2">
+        <button type="submit" class="px-6 py-2.5 rounded-full bg-blue hover:bg-blue-dark text-sm font-semibold transition">Guardar</button>
+        <button type="button" (click)="cancelForm()" class="px-6 py-2.5 rounded-full border border-white/15 hover:border-white/30 text-sm font-semibold transition">Cancelar</button>
+      </div>
+    </form>
+  </div>
+}
+
+<div class="flex flex-wrap items-center gap-3 mb-4">
+  <div class="relative flex-1 min-w-50">
+    <app-icon name="search" class="w-4 h-4 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+    <input
+      type="text"
+      placeholder="Buscar por id o nombre…"
+      [ngModel]="search()"
+      (ngModelChange)="onSearchChange($event)"
+      class="w-full bg-surface border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-blue"
+    />
+  </div>
+</div>
+
+<div class="bg-surface border border-white/10 rounded-2xl overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-xs text-muted border-b border-white/10">
+        <th class="px-4 py-3 font-semibold cursor-pointer select-none hover:text-white transition" (click)="toggleSort('sortOrder')">
+          Orden @if (sortKey() === 'sortOrder') { <app-icon name="chevronDown" class="w-3 h-3 inline-block" [class.rotate-180]="sortDir() === 'desc'" /> }
+        </th>
+        <th class="px-4 py-3 font-semibold cursor-pointer select-none hover:text-white transition" (click)="toggleSort('id')">
+          Id @if (sortKey() === 'id') { <app-icon name="chevronDown" class="w-3 h-3 inline-block" [class.rotate-180]="sortDir() === 'desc'" /> }
+        </th>
+        <th class="px-4 py-3 font-semibold cursor-pointer select-none hover:text-white transition" (click)="toggleSort('name')">
+          Nombre @if (sortKey() === 'name') { <app-icon name="chevronDown" class="w-3 h-3 inline-block" [class.rotate-180]="sortDir() === 'desc'" /> }
+        </th>
+        <th class="px-4 py-3 font-semibold">Ícono</th>
+        <th class="px-4 py-3 font-semibold">Bombilla</th>
+        <th class="px-4 py-3 font-semibold"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (category of pageItems(); track category.id) {
+        <tr class="border-b border-white/5 hover:bg-white/3">
+          <td class="px-4 py-3 text-muted">{{ category.sortOrder }}</td>
+          <td class="px-4 py-3 text-muted whitespace-nowrap">{{ category.id }}</td>
+          <td class="px-4 py-3 text-white font-medium">
+            <span class="inline-flex items-center gap-2"><app-icon [name]="category.iconName" class="w-4 h-4 text-blue-glow" /> {{ category.name }}</span>
+          </td>
+          <td class="px-4 py-3 text-muted whitespace-nowrap">{{ category.iconName }}</td>
+          <td class="px-4 py-3 text-muted whitespace-nowrap">{{ category.defaultBulbType }}</td>
+          <td class="px-4 py-3 text-right whitespace-nowrap">
+            <button class="text-muted hover:text-white p-1.5" aria-label="Editar" (click)="startEdit(category)"><app-icon name="wrench" class="w-4 h-4" /></button>
+            <button class="text-muted hover:text-amber p-1.5" aria-label="Eliminar" (click)="remove(category)"><app-icon name="trash" class="w-4 h-4" /></button>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6" class="px-4 py-8 text-center text-muted">Sin resultados.</td></tr>
+      }
+    </tbody>
+  </table>
+  <app-pagination
+    [page]="page()"
+    [totalPages]="pageCount()"
+    [totalItems]="filtered().length"
+    [pageSize]="pageSize"
+    (pageChange)="page.set($event)"
+  />
+</div>

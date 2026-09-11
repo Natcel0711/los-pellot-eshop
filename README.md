@@ -50,6 +50,38 @@ Open `http://localhost:4200`.
 | `/contact` | Real contact form |
 | `/checkout` | Cart review, shipping/payment, real order creation |
 | `/account/orders` | Order history (requires login) |
+| `/admin` | Admin panel — see below (requires an admin account) |
+
+## Admin panel (`/admin`)
+
+Full CRUD over the catalog plus order/booking/message management, gated by
+an `IsAdmin` flag on the user (a JWT claim, checked by the `AdminOnly`
+authorization policy server-side and the `adminGuard` client-side). It has
+its own layout (`AdminLayout`) with no public header/footer/cart — the app
+shell hides those on any `/admin` route.
+
+A default admin account is seeded on first run:
+
+```
+email:    admin@lospellotled.com
+password: Admin123!
+```
+
+**Change or remove this before any real deployment** — it's a well-known
+default, not a secret. Log in as this user and open the account menu →
+"Panel de Administración", or go straight to `/admin`.
+
+Pages: **Panel** (dashboard/stats), **Productos** (full CRUD), **Inventario**
+(dedicated per-product stock editor with a low-stock filter), **Categorías**
+(CRUD), **Vehículos** (manage the year/make/model/trim tree, including
+expandable trim lists per model), **Órdenes** (view all orders, change
+status), **Citas** (installation bookings — change status, delete),
+**Mensajes** (contact messages — mark handled, delete), **Usuarios** (list,
+promote/demote admin, delete — an admin can't demote or delete themselves).
+
+Backend surface lives in `Controllers/Admin/` (one controller per resource)
+and `DTOs/AdminDtos.cs`; frontend in `features/admin/` with all API calls
+consolidated in `core/api/admin-api.ts`.
 
 ## Backend structure (`server/LosPellot.Api`)
 
@@ -124,6 +156,6 @@ in mind when adding new async state.
 - **Payment**: checkout accepts and shape-validates card fields but does not
   integrate a real payment gateway (Stripe, etc.) — orders are persisted
   without actually charging anything.
-- **No admin UI**: bookings, contact messages, and orders land in the
-  database and are queryable directly, but there's no back-office screen to
-  manage them yet.
+- **Single admin flag, no granular roles**: `ApplicationUser.IsAdmin` is a
+  simple bool, not a full role/permission system — fine for one or two
+  trusted admins, not for tiered staff permissions.

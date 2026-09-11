@@ -25,6 +25,15 @@
             <p class="text-xs text-muted truncate">Cliente desde {{ user.createdAt | date: 'MMMM y' }}</p>
           </div>
         </div>
+        @if (user.isAdmin) {
+          <a
+            routerLink="/admin"
+            (click)="close()"
+            class="flex items-center justify-center gap-2 w-full mb-4 py-2.5 rounded-full bg-blue/15 border border-blue/30 text-blue-glow hover:text-white hover:bg-blue/25 text-sm font-semibold transition"
+          >
+            <app-icon name="wrench" class="w-4 h-4" /> Panel de Administración
+          </a>
+        }
         <form
           class="space-y-3"
           (submit)="$event.preventDefault(); submitProfile(profileName, profileEmail)"

@@ -45,7 +45,7 @@
                     {{ categoryName(line.product.category) }}{{ line.vehicleLabel ? ' · ' + line.vehicleLabel : '' }} · Cant. {{ line.qty }}
                   </p>
                 </div>
-                <p class="text-sm font-bold text-white shrink-0">{{ line.lineTotal | currency }}</p>
+                <p class="text-sm font-bold text-white shrink-0">{{ line.lineTotal | currency:'USD':'symbol':'1.2-2':'en-US' }}</p>
               </div>
             }
           </div>
@@ -89,15 +89,15 @@
       <aside class="bg-surface border border-white/10 rounded-2xl p-6 h-fit lg:sticky lg:top-28">
         <h2 class="font-display text-xl font-bold tracking-wide mb-5">RESUMEN</h2>
         <div class="space-y-2 text-sm">
-          <div class="flex items-center justify-between text-muted"><span>Subtotal</span><span class="text-white font-medium">{{ liveCart.subtotal | currency }}</span></div>
+          <div class="flex items-center justify-between text-muted"><span>Subtotal</span><span class="text-white font-medium">{{ liveCart.subtotal | currency:'USD':'symbol':'1.2-2':'en-US' }}</span></div>
           <div class="flex items-center justify-between text-muted">
             <span>Envío</span>
-            <span class="text-white font-medium">{{ shipping(liveCart.subtotal) === 0 ? 'Gratis' : (shipping(liveCart.subtotal) | currency) }}</span>
+            <span class="text-white font-medium">{{ shipping(liveCart.subtotal) === 0 ? 'Gratis' : (shipping(liveCart.subtotal) | currency:'USD':'symbol':'1.2-2':'en-US') }}</span>
           </div>
         </div>
         <div class="border-t border-white/10 mt-4 pt-4 flex items-center justify-between">
           <span class="font-semibold">Total</span>
-          <span class="font-display text-2xl font-bold text-white">{{ liveCart.subtotal + shipping(liveCart.subtotal) | currency }}</span>
+          <span class="font-display text-2xl font-bold text-white">{{ liveCart.subtotal + shipping(liveCart.subtotal) | currency:'USD':'symbol':'1.2-2':'en-US' }}</span>
         </div>
         <p class="text-[11px] text-blue-glow mt-2">{{ freeShippingNote(liveCart.subtotal) }}</p>
         @if (error()) {

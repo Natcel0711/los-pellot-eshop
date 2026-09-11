@@ -6,7 +6,7 @@ public record LoginRequest(string Email, string Password);
 
 public record RefreshRequest(string RefreshToken);
 
-public record UserDto(string Id, string FullName, string Email, DateTime CreatedAt);
+public record UserDto(string Id, string FullName, string Email, DateTime CreatedAt, bool IsAdmin);
 
 public record AuthResponse(string AccessToken, string RefreshToken, UserDto User);
 

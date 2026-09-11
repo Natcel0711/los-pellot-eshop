@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { adminGuard } from './core/guards/admin-guard';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,49 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/orders/order-history/order-history').then((m) => m.OrderHistory),
     canActivate: [authGuard],
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/admin-layout/admin-layout').then((m) => m.AdminLayout),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/admin/dashboard/dashboard').then((m) => m.Dashboard),
+      },
+      {
+        path: 'products',
+        loadComponent: () => import('./features/admin/products/products').then((m) => m.Products),
+      },
+      {
+        path: 'inventory',
+        loadComponent: () => import('./features/admin/inventory/inventory').then((m) => m.Inventory),
+      },
+      {
+        path: 'categories',
+        loadComponent: () => import('./features/admin/categories/categories').then((m) => m.Categories),
+      },
+      {
+        path: 'vehicles',
+        loadComponent: () => import('./features/admin/vehicles/vehicles').then((m) => m.Vehicles),
+      },
+      {
+        path: 'orders',
+        loadComponent: () => import('./features/admin/orders/orders').then((m) => m.Orders),
+      },
+      {
+        path: 'bookings',
+        loadComponent: () => import('./features/admin/bookings/bookings').then((m) => m.Bookings),
+      },
+      {
+        path: 'contact',
+        loadComponent: () => import('./features/admin/contact/contact').then((m) => m.Contact),
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/users/users').then((m) => m.Users),
+      },
+    ],
   },
   {
     path: '**',

@@ -70,6 +70,7 @@ export interface User {
   fullName: string;
   email: string;
   createdAt: string;
+  isAdmin: boolean;
 }
 
 export interface AuthResponse {

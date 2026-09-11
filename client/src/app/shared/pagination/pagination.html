@@ -1,0 +1,32 @@
+@if (totalItems > 0) {
+  <div class="flex items-center justify-between gap-4 px-4 py-3 flex-wrap text-xs text-muted">
+    <p>Mostrando {{ rangeStart }}–{{ rangeEnd }} de {{ totalItems }}</p>
+    <div class="flex items-center gap-1">
+      <button
+        class="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/5 active:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        [disabled]="page === 1"
+        (click)="goTo(1)"
+        aria-label="Primera página"
+      ><app-icon name="chevronRight" class="w-3.5 h-3.5 rotate-180" /><app-icon name="chevronRight" class="w-3.5 h-3.5 rotate-180 -ml-2.5" /></button>
+      <button
+        class="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/5 active:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        [disabled]="page === 1"
+        (click)="goTo(page - 1)"
+        aria-label="Página anterior"
+      ><app-icon name="chevronRight" class="w-3.5 h-3.5 rotate-180" /></button>
+      <span class="px-2 font-semibold text-white">{{ page }} / {{ totalPages }}</span>
+      <button
+        class="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/5 active:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        [disabled]="page === totalPages"
+        (click)="goTo(page + 1)"
+        aria-label="Página siguiente"
+      ><app-icon name="chevronRight" class="w-3.5 h-3.5" /></button>
+      <button
+        class="w-7 h-7 rounded-full flex items-center justify-center hover:bg-white/5 active:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        [disabled]="page === totalPages"
+        (click)="goTo(totalPages)"
+        aria-label="Última página"
+      ><app-icon name="chevronRight" class="w-3.5 h-3.5" /><app-icon name="chevronRight" class="w-3.5 h-3.5 -ml-2.5" /></button>
+    </div>
+  </div>
+}

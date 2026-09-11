@@ -1,5 +1,6 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Icon } from '../../shared/icon/icon';
 import { initials } from '../../shared/initials';
 import { Auth } from '../../core/services/auth';
@@ -12,7 +13,7 @@ interface AccountMessage {
 
 @Component({
   selector: 'app-account-modal',
-  imports: [AsyncPipe, DatePipe, Icon],
+  imports: [AsyncPipe, DatePipe, RouterLink, Icon],
   styleUrl: './account-modal.css',
   templateUrl: './account-modal.html',
 })

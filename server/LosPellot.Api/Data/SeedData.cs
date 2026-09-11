@@ -1,4 +1,5 @@
 using LosPellot.Api.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace LosPellot.Api.Data;
@@ -8,6 +9,36 @@ namespace LosPellot.Api.Data;
 // development if the Categories table is empty.
 public static class SeedData
 {
+    public const string DefaultAdminEmail = "admin@lospellotled.com";
+    public const string DefaultAdminPassword = "Admin123!";
+
+    // Seeds one admin account so there's a way into /admin without direct DB
+    // access. Change this password (or the account entirely) before any real
+    // deployment — it's a well-known default, not a secret.
+    public static async Task EnsureAdminUserAsync(UserManager<ApplicationUser> userManager)
+    {
+        var existing = await userManager.FindByEmailAsync(DefaultAdminEmail);
+        if (existing is not null)
+        {
+            if (!existing.IsAdmin)
+            {
+                existing.IsAdmin = true;
+                await userManager.UpdateAsync(existing);
+            }
+            return;
+        }
+
+        var admin = new ApplicationUser
+        {
+            UserName = DefaultAdminEmail,
+            Email = DefaultAdminEmail,
+            FullName = "Admin",
+            CreatedAt = DateTime.UtcNow,
+            IsAdmin = true,
+        };
+        await userManager.CreateAsync(admin, DefaultAdminPassword);
+    }
+
     public static async Task EnsureSeededAsync(AppDbContext db)
     {
         if (await db.Categories.AnyAsync()) return;
@@ -32,31 +63,31 @@ public static class SeedData
 
         var products = new List<Product>
         {
-            new() { Id = "p001", Name = "Mini Chip LED Headlight Kit", CategoryId = "headlights", Price = 65, SalePrice = null, Lumens = "60,000", Warranty = "6 months", Badge = "Best Seller", IsUniversal = false },
-            new() { Id = "p002", Name = "360° LED Headlight Kit", CategoryId = "headlights", Price = 45, SalePrice = 35, Lumens = "40,000", Warranty = "3 months", Badge = "Sale", IsUniversal = false },
-            new() { Id = "p003", Name = "Super Chip LED Headlight Kit", CategoryId = "headlights", Price = 85, SalePrice = null, Lumens = "100,000", Warranty = "1 year", Badge = null, IsUniversal = false },
-            new() { Id = "p004", Name = "Kamaleon Dual-Color LED Kit", CategoryId = "headlights", Price = 100, SalePrice = null, Lumens = "70,000", Warranty = "1 year", Badge = "Dual Color", IsUniversal = false },
-            new() { Id = "p005", Name = "Fog Light LED Pods", CategoryId = "fog-lights", Price = 55, SalePrice = 42, Lumens = "30,000", Warranty = "6 months", Badge = "Sale", IsUniversal = false },
-            new() { Id = "p006", Name = "H8/H11 Fog Light Bulb Set", CategoryId = "fog-lights", Price = 38, SalePrice = null, Lumens = "24,000", Warranty = "6 months", Badge = null, IsUniversal = false },
-            new() { Id = "p007", Name = "DRL Switchback Strip Kit", CategoryId = "drl", Price = 48, SalePrice = null, Lumens = "18,000", Warranty = "6 months", Badge = null, IsUniversal = false },
-            new() { Id = "p008", Name = "H16 DRL LED Bulbs", CategoryId = "drl", Price = 32, SalePrice = null, Lumens = "16,000", Warranty = "3 months", Badge = null, IsUniversal = false },
-            new() { Id = "p009", Name = "Amber Turn Signal LED Set", CategoryId = "turn-signals", Price = 22, SalePrice = null, Lumens = "6,000", Warranty = "3 months", Badge = null, IsUniversal = false },
-            new() { Id = "p010", Name = "Switchback Turn Signal Kit", CategoryId = "turn-signals", Price = 34, SalePrice = 27, Lumens = "8,000", Warranty = "6 months", Badge = "Sale", IsUniversal = false },
-            new() { Id = "p011", Name = "7443 Tail Light LED Bulbs", CategoryId = "tail-lights", Price = 28, SalePrice = null, Lumens = "9,000", Warranty = "6 months", Badge = null, IsUniversal = false },
-            new() { Id = "p012", Name = "Sequential LED Tail Kit", CategoryId = "tail-lights", Price = 90, SalePrice = 72, Lumens = "15,000", Warranty = "1 year", Badge = "Sale", IsUniversal = false },
-            new() { Id = "p013", Name = "921 Reverse Light Bulbs", CategoryId = "reverse", Price = 18, SalePrice = null, Lumens = "4,000", Warranty = "3 months", Badge = null, IsUniversal = false },
-            new() { Id = "p014", Name = "168 Side Marker LED Set", CategoryId = "side-markers", Price = 16, SalePrice = null, Lumens = "2,000", Warranty = "3 months", Badge = null, IsUniversal = false },
-            new() { Id = "p015", Name = "Smoked Side Marker LEDs", CategoryId = "side-markers", Price = 24, SalePrice = null, Lumens = "2,400", Warranty = "3 months", Badge = "New", IsUniversal = false },
-            new() { Id = "p016", Name = "194 License Plate LED Bulbs", CategoryId = "license-plate", Price = 12, SalePrice = null, Lumens = "1,200", Warranty = "3 months", Badge = null, IsUniversal = true },
-            new() { Id = "p017", Name = "31mm Festoon Interior Kit", CategoryId = "interior", Price = 20, SalePrice = null, Lumens = "3,000", Warranty = "6 months", Badge = null, IsUniversal = true },
-            new() { Id = "p018", Name = "RGB Cabin Light Kit w/ App Control", CategoryId = "interior", Price = 58, SalePrice = 46, Lumens = "5,000", Warranty = "1 year", Badge = "Sale", IsUniversal = true },
-            new() { Id = "p019", Name = "Footwell Ambient LED Kit", CategoryId = "interior", Price = 44, SalePrice = null, Lumens = "4,500", Warranty = "1 year", Badge = null, IsUniversal = true },
-            new() { Id = "p020", Name = "RGB Underglow Kit — 4pc", CategoryId = "underglow", Price = 120, SalePrice = 96, Lumens = "20,000", Warranty = "1 year", Badge = "Sale", IsUniversal = true },
-            new() { Id = "p021", Name = "Bluetooth Underglow Controller Kit", CategoryId = "underglow", Price = 145, SalePrice = null, Lumens = "24,000", Warranty = "1 year", Badge = "Best Seller", IsUniversal = true },
-            new() { Id = "p022", Name = "20\" Curved LED Light Bar", CategoryId = "light-bars", Price = 110, SalePrice = null, Lumens = "40,000", Warranty = "1 year", Badge = null, IsUniversal = true },
-            new() { Id = "p023", Name = "30\" Dual-Row Light Bar", CategoryId = "light-bars", Price = 160, SalePrice = 130, Lumens = "60,000", Warranty = "1 year", Badge = "Sale", IsUniversal = true },
-            new() { Id = "p024", Name = "RF Wireless LED Controller", CategoryId = "controllers", Price = 25, SalePrice = null, Lumens = "—", Warranty = "6 months", Badge = null, IsUniversal = true },
-            new() { Id = "p025", Name = "App-Controlled RGB Relay Box", CategoryId = "controllers", Price = 40, SalePrice = null, Lumens = "—", Warranty = "1 year", Badge = "New", IsUniversal = true },
+            new() { Id = "p001", Name = "Mini Chip LED Headlight Kit", CategoryId = "headlights", Price = 65, SalePrice = null, Lumens = "60,000", Warranty = "6 months", Badge = "Best Seller", IsUniversal = false, StockQuantity = 42 },
+            new() { Id = "p002", Name = "360° LED Headlight Kit", CategoryId = "headlights", Price = 45, SalePrice = 35, Lumens = "40,000", Warranty = "3 months", Badge = "Sale", IsUniversal = false, StockQuantity = 18 },
+            new() { Id = "p003", Name = "Super Chip LED Headlight Kit", CategoryId = "headlights", Price = 85, SalePrice = null, Lumens = "100,000", Warranty = "1 year", Badge = null, IsUniversal = false, StockQuantity = 27 },
+            new() { Id = "p004", Name = "Kamaleon Dual-Color LED Kit", CategoryId = "headlights", Price = 100, SalePrice = null, Lumens = "70,000", Warranty = "1 year", Badge = "Dual Color", IsUniversal = false, StockQuantity = 9 },
+            new() { Id = "p005", Name = "Fog Light LED Pods", CategoryId = "fog-lights", Price = 55, SalePrice = 42, Lumens = "30,000", Warranty = "6 months", Badge = "Sale", IsUniversal = false, StockQuantity = 33 },
+            new() { Id = "p006", Name = "H8/H11 Fog Light Bulb Set", CategoryId = "fog-lights", Price = 38, SalePrice = null, Lumens = "24,000", Warranty = "6 months", Badge = null, IsUniversal = false, StockQuantity = 51 },
+            new() { Id = "p007", Name = "DRL Switchback Strip Kit", CategoryId = "drl", Price = 48, SalePrice = null, Lumens = "18,000", Warranty = "6 months", Badge = null, IsUniversal = false, StockQuantity = 24 },
+            new() { Id = "p008", Name = "H16 DRL LED Bulbs", CategoryId = "drl", Price = 32, SalePrice = null, Lumens = "16,000", Warranty = "3 months", Badge = null, IsUniversal = false, StockQuantity = 60 },
+            new() { Id = "p009", Name = "Amber Turn Signal LED Set", CategoryId = "turn-signals", Price = 22, SalePrice = null, Lumens = "6,000", Warranty = "3 months", Badge = null, IsUniversal = false, StockQuantity = 45 },
+            new() { Id = "p010", Name = "Switchback Turn Signal Kit", CategoryId = "turn-signals", Price = 34, SalePrice = 27, Lumens = "8,000", Warranty = "6 months", Badge = "Sale", IsUniversal = false, StockQuantity = 15 },
+            new() { Id = "p011", Name = "7443 Tail Light LED Bulbs", CategoryId = "tail-lights", Price = 28, SalePrice = null, Lumens = "9,000", Warranty = "6 months", Badge = null, IsUniversal = false, StockQuantity = 38 },
+            new() { Id = "p012", Name = "Sequential LED Tail Kit", CategoryId = "tail-lights", Price = 90, SalePrice = 72, Lumens = "15,000", Warranty = "1 year", Badge = "Sale", IsUniversal = false, StockQuantity = 7 },
+            new() { Id = "p013", Name = "921 Reverse Light Bulbs", CategoryId = "reverse", Price = 18, SalePrice = null, Lumens = "4,000", Warranty = "3 months", Badge = null, IsUniversal = false, StockQuantity = 70 },
+            new() { Id = "p014", Name = "168 Side Marker LED Set", CategoryId = "side-markers", Price = 16, SalePrice = null, Lumens = "2,000", Warranty = "3 months", Badge = null, IsUniversal = false, StockQuantity = 55 },
+            new() { Id = "p015", Name = "Smoked Side Marker LEDs", CategoryId = "side-markers", Price = 24, SalePrice = null, Lumens = "2,400", Warranty = "3 months", Badge = "New", IsUniversal = false, StockQuantity = 20 },
+            new() { Id = "p016", Name = "194 License Plate LED Bulbs", CategoryId = "license-plate", Price = 12, SalePrice = null, Lumens = "1,200", Warranty = "3 months", Badge = null, IsUniversal = true, StockQuantity = 80 },
+            new() { Id = "p017", Name = "31mm Festoon Interior Kit", CategoryId = "interior", Price = 20, SalePrice = null, Lumens = "3,000", Warranty = "6 months", Badge = null, IsUniversal = true, StockQuantity = 40 },
+            new() { Id = "p018", Name = "RGB Cabin Light Kit w/ App Control", CategoryId = "interior", Price = 58, SalePrice = 46, Lumens = "5,000", Warranty = "1 year", Badge = "Sale", IsUniversal = true, StockQuantity = 12 },
+            new() { Id = "p019", Name = "Footwell Ambient LED Kit", CategoryId = "interior", Price = 44, SalePrice = null, Lumens = "4,500", Warranty = "1 year", Badge = null, IsUniversal = true, StockQuantity = 22 },
+            new() { Id = "p020", Name = "RGB Underglow Kit — 4pc", CategoryId = "underglow", Price = 120, SalePrice = 96, Lumens = "20,000", Warranty = "1 year", Badge = "Sale", IsUniversal = true, StockQuantity = 6 },
+            new() { Id = "p021", Name = "Bluetooth Underglow Controller Kit", CategoryId = "underglow", Price = 145, SalePrice = null, Lumens = "24,000", Warranty = "1 year", Badge = "Best Seller", IsUniversal = true, StockQuantity = 14 },
+            new() { Id = "p022", Name = "20\" Curved LED Light Bar", CategoryId = "light-bars", Price = 110, SalePrice = null, Lumens = "40,000", Warranty = "1 year", Badge = null, IsUniversal = true, StockQuantity = 19 },
+            new() { Id = "p023", Name = "30\" Dual-Row Light Bar", CategoryId = "light-bars", Price = 160, SalePrice = 130, Lumens = "60,000", Warranty = "1 year", Badge = "Sale", IsUniversal = true, StockQuantity = 3 },
+            new() { Id = "p024", Name = "RF Wireless LED Controller", CategoryId = "controllers", Price = 25, SalePrice = null, Lumens = "—", Warranty = "6 months", Badge = null, IsUniversal = true, StockQuantity = 65 },
+            new() { Id = "p025", Name = "App-Controlled RGB Relay Box", CategoryId = "controllers", Price = 40, SalePrice = null, Lumens = "—", Warranty = "1 year", Badge = "New", IsUniversal = true, StockQuantity = 28 },
         };
         db.Products.AddRange(products);
 

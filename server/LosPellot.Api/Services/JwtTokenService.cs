@@ -69,6 +69,7 @@ public class JwtTokenService(IConfiguration configuration, AppDbContext db)
             new(ClaimTypes.NameIdentifier, user.Id),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
             new("full_name", user.FullName),
+            new("is_admin", user.IsAdmin ? "true" : "false"),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 

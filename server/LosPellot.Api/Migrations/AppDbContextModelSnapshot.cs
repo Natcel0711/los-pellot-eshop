@@ -43,6 +43,9 @@ namespace LosPellot.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
@@ -377,6 +380,9 @@ namespace LosPellot.Api.Migrations
 
                     b.Property<decimal?>("SalePrice")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("StockQuantity")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Warranty")
                         .IsRequired()
