@@ -17,4 +17,8 @@ services:
       - key: Cors__AllowedOrigins__0
         value: http://localhost:4200
       - key: Cors__AllowedOrigins__1
+        value: https://lospellot.com
+      - key: Cors__AllowedOrigins__2
+        value: https://www.lospellot.com
+      - key: Cors__AllowedOrigins__3
         sync: false
