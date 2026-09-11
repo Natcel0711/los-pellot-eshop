@@ -9,7 +9,6 @@ const NAV_LINKS = [
   { id: "products", href: "products.html", label: "Productos" },
   { id: "vehicle", href: "vehicle.html", label: "Por Vehículo" },
   { id: "installation", href: "installation.html", label: "Instalación" },
-  { id: "offers", href: "offers.html", label: "Ofertas" },
   { id: "contact", href: "contact.html", label: "Contáctanos" },
 ];
 
