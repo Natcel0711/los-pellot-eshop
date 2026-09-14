@@ -81,6 +81,7 @@ public class ProductsController(AppDbContext db) : ControllerBase
         p.Warranty,
         p.Badge,
         p.IsUniversal,
-        hasVehicleFilter ? true : null
+        hasVehicleFilter ? true : null,
+        p.ImageUrl
     );
 }

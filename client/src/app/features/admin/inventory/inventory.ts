@@ -1,9 +1,11 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Icon } from '../../../shared/icon/icon';
+import { ProductThumb } from '../../../shared/product-thumb/product-thumb';
 import { Pagination } from '../../../shared/pagination/pagination';
 import { AdminApi } from '../../../core/api/admin-api';
 import { Toast } from '../../../core/services/toast';
+import { categoryIcon } from '../../../shared/category-icons';
 import { AdminCategory, AdminProduct } from '../../../shared/admin-models';
 import { Sorter, matchesQuery, paginate, sortRows, totalPages } from '../../../shared/table-utils';
 
@@ -20,7 +22,7 @@ const SORTERS: Record<SortKey, Sorter<AdminProduct>> = {
 
 @Component({
   selector: 'app-inventory',
-  imports: [FormsModule, Icon, Pagination],
+  imports: [FormsModule, Icon, ProductThumb, Pagination],
   styleUrl: './inventory.css',
   templateUrl: './inventory.html',
 })
@@ -28,6 +30,7 @@ export class Inventory implements OnInit {
   private readonly adminApi = inject(AdminApi);
   private readonly toast = inject(Toast);
 
+  protected readonly categoryIcon = categoryIcon;
   protected readonly products = signal<AdminProduct[]>([]);
   protected readonly categories = signal<AdminCategory[]>([]);
   protected readonly savingId = signal<string | null>(null);

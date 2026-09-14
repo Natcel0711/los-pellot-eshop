@@ -9,6 +9,7 @@ export interface AdminProduct {
   badge: string | null;
   isUniversal: boolean;
   stockQuantity: number;
+  imageUrl: string | null;
 }
 
 export interface UpsertProductRequest {

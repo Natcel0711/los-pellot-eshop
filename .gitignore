@@ -8,9 +8,16 @@ server/**/*.db
 server/**/*.db-shm
 server/**/*.db-wal
 
+# Uploaded product images (local dev only — same ephemeral-disk story as the
+# SQLite db; not meant to be committed)
+server/LosPellot.Api/wwwroot/uploads/
+
 # IDEs and editors
 .vs/
 .idea/
+
+# Local dev convenience scripts
+dev.ps1
 
 # System files
 .DS_Store

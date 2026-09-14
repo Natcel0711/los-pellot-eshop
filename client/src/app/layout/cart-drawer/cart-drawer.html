@@ -35,8 +35,8 @@
       <div>
         @for (line of (cart.cart$ | async)?.lines; track line.key) {
           <div class="flex gap-3 py-4 border-b border-white/5">
-            <div class="w-16 h-16 shrink-0 rounded-lg bg-surface-2 border border-white/5 flex items-center justify-center text-blue-glow">
-              <app-icon [name]="categoryIcon(line.product.category)" class="w-7 h-7" />
+            <div class="w-16 h-16 shrink-0 rounded-lg overflow-hidden bg-surface-2 border border-white/5 flex items-center justify-center text-blue-glow">
+              <app-product-thumb [imageUrl]="line.product.imageUrl" [iconName]="categoryIcon(line.product.category)" [alt]="line.product.name" iconClass="w-7 h-7" />
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold text-white leading-snug truncate">{{ line.product.name }}</p>

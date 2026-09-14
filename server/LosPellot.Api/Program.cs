@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -88,6 +89,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Ensure the uploads folder exists before UseStaticFiles() (and before any
+// upload is attempted) — a fresh clone/container won't have it yet.
+var webRoot = string.IsNullOrEmpty(app.Environment.WebRootPath)
+    ? Path.Combine(app.Environment.ContentRootPath, "wwwroot")
+    : app.Environment.WebRootPath;
+Directory.CreateDirectory(Path.Combine(webRoot, "uploads", "products"));
+
 // Apply migrations and seed on every startup (not just Development) since
 // this app is deployed to a host — like Render's free tier — whose disk
 // resets on redeploy, so the schema/catalog need to be (re)created each time.
@@ -118,6 +126,14 @@ else
     });
 }
 
+// Use an explicit PhysicalFileProvider rather than the bare overload: if wwwroot
+// didn't exist yet when the host was built (first run before any upload), the
+// default env.WebRootFileProvider is a NullFileProvider and won't pick up the
+// directory we just created above, even though it now exists on disk.
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(webRoot),
+});
 app.UseCors("Frontend");
 
 app.UseAuthentication();

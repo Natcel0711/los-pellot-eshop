@@ -1,6 +1,7 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { Icon } from '../icon/icon';
+import { ProductThumb } from '../product-thumb/product-thumb';
 import { categoryIcon } from '../category-icons';
 import { Cart } from '../../core/services/cart';
 import { Toast } from '../../core/services/toast';
@@ -9,7 +10,7 @@ import { Category, Product } from '../models';
 
 @Component({
   selector: 'app-product-card',
-  imports: [CurrencyPipe, Icon],
+  imports: [CurrencyPipe, Icon, ProductThumb],
   styleUrl: './product-card.css',
   templateUrl: './product-card.html',
 })

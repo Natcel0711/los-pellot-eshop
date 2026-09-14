@@ -2,9 +2,11 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Icon } from '../../../shared/icon/icon';
+import { ProductThumb } from '../../../shared/product-thumb/product-thumb';
 import { Pagination } from '../../../shared/pagination/pagination';
 import { AdminApi } from '../../../core/api/admin-api';
 import { Toast } from '../../../core/services/toast';
+import { categoryIcon } from '../../../shared/category-icons';
 import { AdminCategory, AdminProduct } from '../../../shared/admin-models';
 import { Sorter, matchesQuery, paginate, sortRows, totalPages } from '../../../shared/table-utils';
 
@@ -19,10 +21,11 @@ const SORTERS: Record<SortKey, Sorter<AdminProduct>> = {
 };
 
 const PAGE_SIZE = 10;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 @Component({
   selector: 'app-products',
-  imports: [CurrencyPipe, FormsModule, Icon, Pagination],
+  imports: [CurrencyPipe, FormsModule, Icon, ProductThumb, Pagination],
   styleUrl: './products.css',
   templateUrl: './products.html',
 })
@@ -30,11 +33,15 @@ export class Products implements OnInit {
   private readonly adminApi = inject(AdminApi);
   private readonly toast = inject(Toast);
 
+  protected readonly categoryIcon = categoryIcon;
+
   protected readonly products = signal<AdminProduct[]>([]);
   protected readonly categories = signal<AdminCategory[]>([]);
   protected readonly editing = signal<AdminProduct | null>(null);
   protected readonly showForm = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly uploadingImage = signal(false);
+  protected readonly imageError = signal<string | null>(null);
 
   protected readonly search = signal('');
   protected readonly categoryFilter = signal('');
@@ -60,7 +67,16 @@ export class Products implements OnInit {
   }
 
   private refresh(): void {
-    this.adminApi.getProducts().subscribe((products) => this.products.set(products));
+    this.adminApi.getProducts().subscribe((products) => {
+      this.products.set(products);
+      // Keep the open edit form's preview in sync with the freshly-fetched row
+      // (e.g. right after an image upload/removal).
+      const editing = this.editing();
+      if (editing) {
+        const updated = products.find((p) => p.id === editing.id);
+        if (updated) this.editing.set(updated);
+      }
+    });
   }
 
   categoryName(id: string): string {
@@ -89,12 +105,14 @@ export class Products implements OnInit {
   startCreate(): void {
     this.editing.set(null);
     this.error.set(null);
+    this.imageError.set(null);
     this.showForm.set(true);
   }
 
   startEdit(product: AdminProduct): void {
     this.editing.set(product);
     this.error.set(null);
+    this.imageError.set(null);
     this.showForm.set(true);
   }
 
@@ -126,14 +144,57 @@ export class Products implements OnInit {
       : this.adminApi.createProduct(request);
 
     request$.subscribe({
-      next: () => {
+      next: (saved) => {
         this.toast.show(editing ? 'Producto actualizado.' : 'Producto creado.');
-        this.showForm.set(false);
+        this.error.set(null);
+        this.editing.set(saved);
         this.refresh();
       },
       error: (err) => {
         this.error.set(err?.error?.error ?? 'No se pudo guardar el producto.');
       },
+    });
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // allow re-selecting the same file later
+    if (!file) return;
+
+    const editing = this.editing();
+    if (!editing) return;
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      this.imageError.set('La imagen no puede pesar más de 5 MB.');
+      return;
+    }
+
+    this.imageError.set(null);
+    this.uploadingImage.set(true);
+    this.adminApi.uploadProductImage(editing.id, file).subscribe({
+      next: (updated) => {
+        this.editing.set(updated);
+        this.uploadingImage.set(false);
+        this.refresh();
+      },
+      error: (err) => {
+        this.imageError.set(err?.error?.error ?? 'No se pudo subir la imagen.');
+        this.uploadingImage.set(false);
+      },
+    });
+  }
+
+  removeImage(): void {
+    const editing = this.editing();
+    if (!editing || !confirm('¿Quitar la foto de este producto?')) return;
+
+    this.adminApi.deleteProductImage(editing.id).subscribe({
+      next: (updated) => {
+        this.editing.set(updated);
+        this.refresh();
+      },
+      error: () => this.toast.show('No se pudo quitar la imagen.'),
     });
   }
 

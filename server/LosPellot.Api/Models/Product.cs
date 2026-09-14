@@ -14,5 +14,9 @@ public class Product
     public bool IsUniversal { get; set; }
     public int StockQuantity { get; set; }
 
+    // Relative path served via static files, e.g. "/uploads/products/p001-abc123.jpg".
+    // Null means "no photo yet" — the frontend falls back to the category icon.
+    public string? ImageUrl { get; set; }
+
     public List<ProductFitment> Fitments { get; set; } = [];
 }

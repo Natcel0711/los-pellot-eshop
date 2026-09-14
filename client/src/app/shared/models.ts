@@ -16,6 +16,7 @@ export interface Product {
   badge: string | null;
   universal: boolean;
   fitsSelectedVehicle: boolean | null;
+  imageUrl: string | null;
 }
 
 export interface VehicleModelTree {

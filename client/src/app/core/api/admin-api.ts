@@ -47,6 +47,16 @@ export class AdminApi {
     return this.http.delete<void>(`/api/admin/products/${id}`);
   }
 
+  uploadProductImage(id: string, file: File): Observable<AdminProduct> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<AdminProduct>(`/api/admin/products/${id}/image`, form);
+  }
+
+  deleteProductImage(id: string): Observable<AdminProduct> {
+    return this.http.delete<AdminProduct>(`/api/admin/products/${id}/image`);
+  }
+
   // Categories
   getCategories(): Observable<AdminCategory[]> {
     return this.http.get<AdminCategory[]>('/api/admin/categories');

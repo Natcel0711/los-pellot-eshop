@@ -36,8 +36,8 @@
           <div class="divide-y divide-white/5">
             @for (line of liveCart.lines; track line.key) {
               <div class="flex items-center gap-4 py-4">
-                <div class="w-14 h-14 shrink-0 rounded-lg bg-surface-2 border border-white/5 flex items-center justify-center text-blue-glow">
-                  <app-icon [name]="categoryIcon(line.product.category)" class="w-6 h-6" />
+                <div class="w-14 h-14 shrink-0 rounded-lg overflow-hidden bg-surface-2 border border-white/5 flex items-center justify-center text-blue-glow">
+                  <app-product-thumb [imageUrl]="line.product.imageUrl" [iconName]="categoryIcon(line.product.category)" [alt]="line.product.name" iconClass="w-6 h-6" />
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-semibold text-white truncate">{{ line.product.name }}</p>

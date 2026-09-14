@@ -364,6 +364,9 @@ namespace LosPellot.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsUniversal")
                         .HasColumnType("INTEGER");
 

@@ -25,6 +25,7 @@
   <table class="w-full text-sm">
     <thead>
       <tr class="text-left text-xs text-muted border-b border-white/10">
+        <th class="px-4 py-3 font-semibold"></th>
         <th class="px-4 py-3 font-semibold cursor-pointer select-none hover:text-white transition" (click)="toggleSort('name')">
           Producto @if (sortKey() === 'name') { <app-icon name="chevronDown" class="w-3 h-3 inline-block" [class.rotate-180]="sortDir() === 'desc'" /> }
         </th>
@@ -40,6 +41,11 @@
     <tbody>
       @for (product of pageItems(); track product.id) {
         <tr class="border-b border-white/5 hover:bg-white/3">
+          <td class="px-4 py-3">
+            <div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-2 border border-white/10 flex items-center justify-center text-blue-glow">
+              <app-product-thumb [imageUrl]="product.imageUrl" [iconName]="categoryIcon(product.categoryId)" [alt]="product.name" iconClass="w-5 h-5" />
+            </div>
+          </td>
           <td class="px-4 py-3">
             <p class="text-white font-medium">{{ product.name }}</p>
             <p class="text-xs text-muted">{{ product.id }}</p>
@@ -76,7 +82,7 @@
           </td>
         </tr>
       } @empty {
-        <tr><td colspan="4" class="px-4 py-8 text-center text-muted">Sin resultados.</td></tr>
+        <tr><td colspan="5" class="px-4 py-8 text-center text-muted">Sin resultados.</td></tr>
       }
     </tbody>
   </table>

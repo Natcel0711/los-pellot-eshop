@@ -152,7 +152,7 @@ public class CartController(AppDbContext db, CartResolver cartResolver) : Contro
                 item.Qty,
                 item.VehicleLabel,
                 new ProductDto(product.Id, product.Name, product.CategoryId, product.Price, product.SalePrice,
-                    product.Lumens, product.Warranty, product.Badge, product.IsUniversal, null),
+                    product.Lumens, product.Warranty, product.Badge, product.IsUniversal, null, product.ImageUrl),
                 unit,
                 lineTotal
             );

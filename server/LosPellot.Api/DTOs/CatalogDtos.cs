@@ -12,7 +12,8 @@ public record ProductDto(
     string Warranty,
     string? Badge,
     bool Universal,
-    bool? FitsSelectedVehicle
+    bool? FitsSelectedVehicle,
+    string? ImageUrl
 );
 
 public record VehicleModelTreeDto(string Model, List<string> Trims);

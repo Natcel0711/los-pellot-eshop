@@ -2,6 +2,7 @@ import { AsyncPipe, CurrencyPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from '../../shared/icon/icon';
+import { ProductThumb } from '../../shared/product-thumb/product-thumb';
 import { categoryIcon } from '../../shared/category-icons';
 import { Cart } from '../../core/services/cart';
 import { Catalog } from '../../core/services/catalog';
@@ -13,7 +14,7 @@ const FLAT_SHIPPING = 9.99;
 
 @Component({
   selector: 'app-checkout',
-  imports: [AsyncPipe, CurrencyPipe, RouterLink, Icon],
+  imports: [AsyncPipe, CurrencyPipe, RouterLink, Icon, ProductThumb],
   styleUrl: './checkout.css',
   templateUrl: './checkout.html',
 })

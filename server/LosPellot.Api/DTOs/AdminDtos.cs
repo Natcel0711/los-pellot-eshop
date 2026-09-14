@@ -3,7 +3,8 @@ namespace LosPellot.Api.DTOs;
 // ---- Products ----
 public record AdminProductDto(
     string Id, string Name, string CategoryId, decimal Price, decimal? SalePrice,
-    string Lumens, string Warranty, string? Badge, bool IsUniversal, int StockQuantity
+    string Lumens, string Warranty, string? Badge, bool IsUniversal, int StockQuantity,
+    string? ImageUrl
 );
 
 public record UpsertProductRequest(
