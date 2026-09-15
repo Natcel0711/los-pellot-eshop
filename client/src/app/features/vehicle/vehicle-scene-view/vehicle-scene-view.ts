@@ -27,7 +27,7 @@ export class VehicleSceneView implements AfterViewInit, OnChanges, OnDestroy {
   @Input() activeCategory: string | null = null;
 
   @Output() hotspotClick = new EventEmitter<{ category: string; label: string }>();
-  @Output() hotspotHover = new EventEmitter<{ label: string; x: number; y: number } | null>();
+  @Output() hotspotHover = new EventEmitter<{ category: string; x: number; y: number } | null>();
   @Output() autoRotateChange = new EventEmitter<boolean>();
 
   private scene: VehicleSceneHandle | null = null;
@@ -35,8 +35,8 @@ export class VehicleSceneView implements AfterViewInit, OnChanges, OnDestroy {
   ngAfterViewInit(): void {
     this.scene = createVehicleScene(this.containerRef.nativeElement, {
       onHotspotClick: (category, label) => this.hotspotClick.emit({ category, label }),
-      onHotspotHover: (label, x, y) =>
-        this.hotspotHover.emit(label ? { label, x: x ?? 0, y: y ?? 0 } : null),
+      onHotspotHover: (category, x, y) =>
+        this.hotspotHover.emit(category ? { category, x: x ?? 0, y: y ?? 0 } : null),
       onAutoRotateChange: (isOn) => this.autoRotateChange.emit(isOn),
     });
 

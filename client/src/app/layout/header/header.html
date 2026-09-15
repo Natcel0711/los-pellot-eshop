@@ -20,7 +20,7 @@
             [class.text-muted]="!rla.isActive"
             [class.hover:text-white]="!rla.isActive"
           >
-            {{ link.label.toUpperCase() }}
+            {{ i18n.t(link.labelKey).toUpperCase() }}
             @if (rla.isActive) {
               <span class="absolute left-0 right-0 -bottom-1 h-0.5 bg-blue rounded-full"></span>
             }
@@ -30,9 +30,16 @@
 
       <div class="flex items-center gap-4">
         <button
+          class="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition text-xs font-bold tracking-wide"
+          [attr.aria-label]="i18n.t('header.langToggleAria')"
+          [title]="i18n.t('header.langToggleAria')"
+          (click)="i18n.toggle()"
+        >{{ i18n.lang() === 'es' ? 'EN' : 'ES' }}</button>
+
+        <button
           class="hidden sm:flex w-9 h-9 items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition"
-          aria-label="Buscar"
-          title="Buscar"
+          [attr.aria-label]="i18n.t('header.searchAria')"
+          [title]="i18n.t('header.searchAria')"
           (click)="ui.toggleSearchBar()"
         >
           <app-icon name="search" class="w-5 h-5" />
@@ -40,8 +47,8 @@
 
         <button
           class="w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition"
-          aria-label="Cuenta"
-          [title]="(auth.currentUser$ | async)?.fullName || 'Mi Cuenta'"
+          [attr.aria-label]="i18n.t('header.accountAria')"
+          [title]="(auth.currentUser$ | async)?.fullName || i18n.t('header.accountTitleGuest')"
           (click)="onAccountClick()"
         >
           @if (auth.currentUser$ | async; as user) {
@@ -55,7 +62,7 @@
 
         <button
           class="relative w-9 h-9 flex items-center justify-center rounded-full text-muted hover:text-white hover:bg-white/5 active:bg-white/10 active:scale-90 transition"
-          aria-label="Carrito"
+          [attr.aria-label]="i18n.t('header.cartAria')"
           (click)="ui.openCartDrawer()"
         >
           <app-icon name="cart" class="w-5 h-5" />
@@ -70,7 +77,7 @@
 
         <button
           class="lg:hidden w-9 h-9 flex items-center justify-center rounded-full text-white active:bg-white/10 active:scale-90 transition"
-          aria-label="Menú"
+          [attr.aria-label]="i18n.t('header.menuAria')"
           (click)="ui.toggleMobileMenu()"
         >
           <app-icon name="menu" class="w-6 h-6" />
@@ -87,7 +94,7 @@
           <input
             #searchInput
             type="text"
-            placeholder="Buscar faros, LEDs, kits…"
+            [placeholder]="i18n.t('header.searchPlaceholder')"
             class="flex-1 bg-transparent text-white placeholder-muted text-sm focus:outline-none"
           />
         </form>
@@ -105,9 +112,13 @@
           (click)="ui.closeMobileMenu()"
           class="block px-5 py-3 text-sm font-semibold tracking-wide border-b border-white/5 text-muted active:bg-white/10 transition"
         >
-          {{ link.label.toUpperCase() }}
+          {{ i18n.t(link.labelKey).toUpperCase() }}
         </a>
       }
+      <button
+        class="w-full text-left px-5 py-3 text-sm font-semibold tracking-wide text-muted active:bg-white/10 transition"
+        (click)="i18n.toggle()"
+      >{{ i18n.lang() === 'es' ? 'ENGLISH' : 'ESPAÑOL' }}</button>
     </div>
   }
 </header>

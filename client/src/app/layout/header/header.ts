@@ -6,10 +6,11 @@ import { initials } from '../../shared/initials';
 import { Auth } from '../../core/services/auth';
 import { Cart } from '../../core/services/cart';
 import { UiState } from '../../core/services/ui-state';
+import { Translation } from '../../core/services/translation';
 
 interface NavLink {
   path: string;
-  label: string;
+  labelKey: string;
 }
 
 @Component({
@@ -22,14 +23,15 @@ export class Header {
   protected readonly auth = inject(Auth);
   protected readonly cart = inject(Cart);
   protected readonly ui = inject(UiState);
+  protected readonly i18n = inject(Translation);
   private readonly router = inject(Router);
 
   protected readonly navLinks: NavLink[] = [
-    { path: '/', label: 'Inicio' },
-    { path: '/products', label: 'Productos' },
-    { path: '/vehicle', label: 'Por Vehículo' },
-    { path: '/installation', label: 'Instalación' },
-    { path: '/contact', label: 'Contáctanos' },
+    { path: '/', labelKey: 'nav.home' },
+    { path: '/products', labelKey: 'nav.products' },
+    { path: '/vehicle', labelKey: 'nav.vehicle' },
+    { path: '/installation', labelKey: 'nav.installation' },
+    { path: '/contact', labelKey: 'nav.contact' },
   ];
 
   protected readonly initials = initials;

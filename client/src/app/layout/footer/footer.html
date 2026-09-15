@@ -3,28 +3,27 @@
     <div class="col-span-2 md:col-span-1">
       <img src="assets/logo.png" alt="Los Pellot LED" class="h-16 w-auto mb-4" />
       <p class="text-sm text-muted leading-relaxed">
-        Distribuidores de LEDs y accesorios para vehículos. Instalación profesional en
-        Massachusetts, envíos a todo Estados Unidos y Puerto Rico.
+        {{ i18n.t('footer.tagline') }}
       </p>
     </div>
     <div>
-      <h4 class="font-display text-lg font-semibold text-white mb-3 tracking-wide">Enlaces Rápidos</h4>
+      <h4 class="font-display text-lg font-semibold text-white mb-3 tracking-wide">{{ i18n.t('footer.quickLinks') }}</h4>
       @for (link of navLinks; track link.path) {
-        <a [routerLink]="link.path" class="block text-sm text-muted hover:text-blue-glow transition py-1">{{ link.label }}</a>
+        <a [routerLink]="link.path" class="block text-sm text-muted hover:text-blue-glow transition py-1">{{ i18n.t(link.labelKey) }}</a>
       }
     </div>
     <div>
-      <h4 class="font-display text-lg font-semibold text-white mb-3 tracking-wide">Categorías</h4>
+      <h4 class="font-display text-lg font-semibold text-white mb-3 tracking-wide">{{ i18n.t('footer.categories') }}</h4>
       @for (category of categories(); track category.id) {
         <a
           routerLink="/products"
           [queryParams]="{ category: category.id }"
           class="block text-sm text-muted hover:text-blue-glow transition py-1"
-        >{{ category.name }}</a>
+        >{{ i18n.categoryLabel(category.id, category.name) }}</a>
       }
     </div>
     <div>
-      <h4 class="font-display text-lg font-semibold text-white mb-3 tracking-wide">Contacto</h4>
+      <h4 class="font-display text-lg font-semibold text-white mb-3 tracking-wide">{{ i18n.t('footer.contact') }}</h4>
       <div class="flex items-start gap-2 text-sm text-muted py-1">
         <span class="mt-0.5 text-blue-glow"><app-icon name="pin" class="w-4 h-4" /></span> Massachusetts, USA
       </div>
@@ -38,7 +37,7 @@
   </div>
   <div class="border-t border-white/5">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p class="text-xs text-muted">© 2024–2026 Los Pellot LED and Accessories Distributors. Todos los derechos reservados.</p>
+      <p class="text-xs text-muted">{{ i18n.t('footer.rights') }}</p>
       <p class="text-xs text-muted tracking-wide">EST. 2024</p>
     </div>
   </div>

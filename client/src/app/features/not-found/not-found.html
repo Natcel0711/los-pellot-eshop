@@ -1,6 +1,6 @@
 <section class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
   <p class="font-display text-7xl font-bold text-blue-glow glow-text mb-4">404</p>
-  <h1 class="font-display text-3xl font-bold">Página no encontrada</h1>
-  <p class="text-sm text-muted mt-2">La página que buscas no existe o fue movida.</p>
-  <a routerLink="/" class="inline-block mt-7 px-7 py-3 rounded-full bg-blue hover:bg-blue-dark font-semibold transition">Volver al Inicio</a>
+  <h1 class="font-display text-3xl font-bold">{{ i18n.t('notFound.title') }}</h1>
+  <p class="text-sm text-muted mt-2">{{ i18n.t('notFound.body') }}</p>
+  <a routerLink="/" class="inline-block mt-7 px-7 py-3 rounded-full bg-blue hover:bg-blue-dark font-semibold transition">{{ i18n.t('notFound.backHome') }}</a>
 </section>

@@ -7,6 +7,7 @@ import { categoryIcon } from '../../shared/category-icons';
 import { Cart } from '../../core/services/cart';
 import { UiState } from '../../core/services/ui-state';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { CartLine, Category } from '../../shared/models';
 
 @Component({
@@ -18,6 +19,7 @@ import { CartLine, Category } from '../../shared/models';
 export class CartDrawer implements OnInit {
   protected readonly cart = inject(Cart);
   protected readonly ui = inject(UiState);
+  protected readonly i18n = inject(Translation);
   private readonly catalog = inject(Catalog);
 
   protected readonly categoryIcon = categoryIcon;
@@ -28,7 +30,7 @@ export class CartDrawer implements OnInit {
   }
 
   categoryName(categoryId: string): string {
-    return this.categories().find((c) => c.id === categoryId)?.name ?? categoryId;
+    return this.i18n.categoryLabel(categoryId, this.categories().find((c) => c.id === categoryId)?.name ?? categoryId);
   }
 
   changeQty(line: CartLine, delta: number): void {

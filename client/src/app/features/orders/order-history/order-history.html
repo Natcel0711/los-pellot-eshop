@@ -1,7 +1,7 @@
 <section class="border-b border-white/5 bg-surface/40">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <h1 class="font-display text-4xl font-bold tracking-wide">MIS ÓRDENES</h1>
-    <p class="text-sm text-muted mt-2">Historial de tus compras en Los Pellot LED.</p>
+    <h1 class="font-display text-4xl font-bold tracking-wide">{{ i18n.t('orderHistory.title') }}</h1>
+    <p class="text-sm text-muted mt-2">{{ i18n.t('orderHistory.subtitle') }}</p>
   </div>
 </section>
 
@@ -11,9 +11,9 @@
       <div class="w-16 h-16 rounded-full bg-surface-2 flex items-center justify-center text-muted mx-auto mb-4">
         <app-icon name="cart" class="w-7 h-7" />
       </div>
-      <p class="text-white font-semibold">Aún no tienes órdenes</p>
-      <p class="text-sm text-muted mt-1 mb-6">Cuando completes una compra, aparecerá aquí.</p>
-      <a routerLink="/products" class="inline-block px-7 py-3 rounded-full bg-blue hover:bg-blue-dark font-semibold transition">Ver Productos</a>
+      <p class="text-white font-semibold">{{ i18n.t('orderHistory.emptyTitle') }}</p>
+      <p class="text-sm text-muted mt-1 mb-6">{{ i18n.t('orderHistory.emptyBody') }}</p>
+      <a routerLink="/products" class="inline-block px-7 py-3 rounded-full bg-blue hover:bg-blue-dark font-semibold transition">{{ i18n.t('orderHistory.viewProducts') }}</a>
     </div>
   } @else {
     <div class="space-y-5">
@@ -22,7 +22,7 @@
           <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <div>
               <p class="font-display text-lg font-bold text-white">#{{ order.orderNumber }}</p>
-              <p class="text-xs text-muted mt-0.5">{{ order.createdAt | date: 'medium' }}</p>
+              <p class="text-xs text-muted mt-0.5">{{ order.createdAt | date: 'medium' : undefined : (i18n.lang() === 'en' ? 'en-US' : 'es') }}</p>
             </div>
             <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue/15 border border-blue/30 text-blue-glow">{{ order.status }}</span>
           </div>
@@ -35,7 +35,7 @@
             }
           </div>
           <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-            <span class="text-sm font-semibold">Total</span>
+            <span class="text-sm font-semibold">{{ i18n.t('orderHistory.total') }}</span>
             <span class="font-display text-xl font-bold text-white">{{ order.total | currency:'USD':'symbol':'1.2-2':'en-US' }}</span>
           </div>
         </div>

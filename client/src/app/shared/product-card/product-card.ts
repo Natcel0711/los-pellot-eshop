@@ -6,6 +6,7 @@ import { categoryIcon } from '../category-icons';
 import { Cart } from '../../core/services/cart';
 import { Toast } from '../../core/services/toast';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { Category, Product } from '../models';
 
 @Component({
@@ -21,6 +22,7 @@ export class ProductCard implements OnInit {
   private readonly cart = inject(Cart);
   private readonly toast = inject(Toast);
   private readonly catalog = inject(Catalog);
+  protected readonly i18n = inject(Translation);
 
   protected readonly categoryIcon = categoryIcon;
   private readonly categories = signal<Category[]>([]);
@@ -30,7 +32,8 @@ export class ProductCard implements OnInit {
   }
 
   get categoryName(): string {
-    return this.categories().find((c) => c.id === this.product.category)?.name ?? this.product.category;
+    const name = this.categories().find((c) => c.id === this.product.category)?.name ?? this.product.category;
+    return this.i18n.categoryLabel(this.product.category, name);
   }
 
   get onSale(): boolean {
@@ -52,7 +55,7 @@ export class ProductCard implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.cart.addToCart(this.product.id, 1, this.vehicleLabel).subscribe(() => {
-      this.toast.show(`${this.product.name} añadido al carrito`);
+      this.toast.show(this.i18n.t('productCard.addedToast', { name: this.product.name }));
     });
   }
 }

@@ -3,6 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from '../../../shared/icon/icon';
 import { OrdersApi } from '../../../core/api/orders-api';
+import { Translation } from '../../../core/services/translation';
 import { Order } from '../../../shared/models';
 
 @Component({
@@ -13,6 +14,7 @@ import { Order } from '../../../shared/models';
 })
 export class OrderHistory implements OnInit {
   private readonly ordersApi = inject(OrdersApi);
+  protected readonly i18n = inject(Translation);
 
   protected readonly orders = signal<Order[]>([]);
   protected readonly loaded = signal(false);

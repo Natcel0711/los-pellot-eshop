@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Translation } from '../../core/services/translation';
 
 @Component({
   selector: 'app-not-found',
@@ -7,4 +8,6 @@ import { RouterLink } from '@angular/router';
   styleUrl: './not-found.css',
   templateUrl: './not-found.html',
 })
-export class NotFound {}
+export class NotFound {
+  protected readonly i18n = inject(Translation);
+}

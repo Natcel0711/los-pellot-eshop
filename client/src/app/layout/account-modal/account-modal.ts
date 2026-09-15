@@ -5,6 +5,7 @@ import { Icon } from '../../shared/icon/icon';
 import { initials } from '../../shared/initials';
 import { Auth } from '../../core/services/auth';
 import { AccountView, UiState } from '../../core/services/ui-state';
+import { Translation } from '../../core/services/translation';
 
 interface AccountMessage {
   text: string;
@@ -20,6 +21,7 @@ interface AccountMessage {
 export class AccountModal {
   protected readonly auth = inject(Auth);
   protected readonly ui = inject(UiState);
+  protected readonly i18n = inject(Translation);
   protected readonly initials = initials;
 
   protected readonly message = signal<AccountMessage | null>(null);
@@ -52,14 +54,14 @@ export class AccountModal {
         return;
       }
       this.ui.setAccountView('profile');
-      this.message.set({ text: '¡Cuenta creada! Ya iniciaste sesión.', kind: 'ok' });
+      this.message.set({ text: this.i18n.t('account.accountCreatedMsg'), kind: 'ok' });
     });
   }
 
   submitProfile(name: HTMLInputElement, email: HTMLInputElement): void {
     this.auth.updateProfile(name.value, email.value).subscribe((res) => {
       this.message.set(
-        res.ok ? { text: 'Cambios guardados.', kind: 'ok' } : { text: res.error!, kind: 'error' },
+        res.ok ? { text: this.i18n.t('account.changesSavedMsg'), kind: 'ok' } : { text: res.error!, kind: 'error' },
       );
     });
   }

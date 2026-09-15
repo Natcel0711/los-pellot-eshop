@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Icon } from '../../shared/icon/icon';
 import { ProductCard } from '../../shared/product-card/product-card';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { ProductsApi } from '../../core/api/products-api';
 import { Category, Product, VehicleYearTree } from '../../shared/models';
 import { availableMakes, availableModels, availableYears } from '../../shared/vehicle-selector';
@@ -18,6 +19,7 @@ export class Home implements OnInit {
   private readonly catalog = inject(Catalog);
   private readonly productsApi = inject(ProductsApi);
   private readonly router = inject(Router);
+  protected readonly i18n = inject(Translation);
 
   protected readonly categories = signal<Category[]>([]);
   protected readonly bestSellers = signal<Product[]>([]);

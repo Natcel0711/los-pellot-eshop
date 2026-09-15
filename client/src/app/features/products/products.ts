@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Icon } from '../../shared/icon/icon';
 import { ProductCard } from '../../shared/product-card/product-card';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { ProductsApi } from '../../core/api/products-api';
 import { Category, Product, ProductFilters, VehicleYearTree } from '../../shared/models';
 import { availableMakes, availableModels, availableYears } from '../../shared/vehicle-selector';
@@ -24,6 +25,7 @@ export class Products implements OnInit {
   private readonly productsApi = inject(ProductsApi);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  protected readonly i18n = inject(Translation);
 
   protected readonly categories = signal<Category[]>([]);
   protected readonly vehicleTree = signal<VehicleYearTree[]>([]);
@@ -74,7 +76,7 @@ export class Products implements OnInit {
   }
 
   categoryName(id: string): string {
-    return this.categories().find((c) => c.id === id)?.name ?? id;
+    return this.i18n.categoryLabel(id, this.categories().find((c) => c.id === id)?.name ?? id);
   }
 
   isCategoryChecked(id: string): boolean {
@@ -160,7 +162,7 @@ export class Products implements OnInit {
     }
     if (this.saleOnly) {
       chips.push({
-        label: 'Solo ofertas',
+        label: this.i18n.t('products.saleOnly'),
         clear: () => {
           this.saleOnly = false;
           this.refresh();

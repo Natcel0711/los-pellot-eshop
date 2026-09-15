@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Icon } from '../../shared/icon/icon';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { Category } from '../../shared/models';
 
 @Component({
@@ -12,13 +13,14 @@ import { Category } from '../../shared/models';
 })
 export class Footer implements OnInit {
   private readonly catalog = inject(Catalog);
+  protected readonly i18n = inject(Translation);
 
   protected readonly navLinks = [
-    { path: '/', label: 'Inicio' },
-    { path: '/products', label: 'Productos' },
-    { path: '/vehicle', label: 'Por Vehículo' },
-    { path: '/installation', label: 'Instalación' },
-    { path: '/contact', label: 'Contáctanos' },
+    { path: '/', labelKey: 'nav.home' },
+    { path: '/products', labelKey: 'nav.products' },
+    { path: '/vehicle', labelKey: 'nav.vehicle' },
+    { path: '/installation', labelKey: 'nav.installation' },
+    { path: '/contact', labelKey: 'nav.contact' },
   ];
 
   protected readonly categories = signal<Category[]>([]);

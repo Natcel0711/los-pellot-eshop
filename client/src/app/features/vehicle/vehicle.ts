@@ -5,13 +5,14 @@ import { Icon } from '../../shared/icon/icon';
 import { ProductCard } from '../../shared/product-card/product-card';
 import { VehicleSceneView } from './vehicle-scene-view/vehicle-scene-view';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { ProductsApi } from '../../core/api/products-api';
 import { Category, Product, VehicleYearTree } from '../../shared/models';
 import { availableMakes, availableModels, availableTrims, availableYears } from '../../shared/vehicle-selector';
 import { VehicleView as CameraView } from './vehicle-scene';
 
 interface Tooltip {
-  label: string;
+  category: string;
   x: number;
   y: number;
 }
@@ -26,6 +27,7 @@ export class Vehicle implements OnInit {
   private readonly catalog = inject(Catalog);
   private readonly productsApi = inject(ProductsApi);
   private readonly route = inject(ActivatedRoute);
+  protected readonly i18n = inject(Translation);
 
   @ViewChild(VehicleSceneView) sceneView?: VehicleSceneView;
 
@@ -38,7 +40,6 @@ export class Vehicle implements OnInit {
   protected trim = '';
 
   protected readonly selectedCategory = signal<string | null>(null);
-  protected readonly selectedCategoryLabel = signal<string | null>(null);
   protected readonly panelProducts = signal<Product[]>([]);
   protected readonly tooltip = signal<Tooltip | null>(null);
   protected readonly autoRotate = signal(true);
@@ -104,19 +105,27 @@ export class Vehicle implements OnInit {
     return this.categories().find((c) => c.id === id)?.defaultBulbType ?? 'Universal';
   }
 
-  selectCategory(category: string, label: string): void {
+  categoryDisplayName(id: string): string {
+    return this.i18n.categoryLabel(id, this.categories().find((c) => c.id === id)?.name ?? id);
+  }
+
+  get selectedCategoryDisplayLabel(): string | null {
+    const id = this.selectedCategory();
+    return id ? this.categoryDisplayName(id) : null;
+  }
+
+  selectCategory(category: string): void {
     this.selectedCategory.set(category);
-    this.selectedCategoryLabel.set(label);
     this.productsApi.getAll({ categories: [category] }).subscribe((products) => {
       this.panelProducts.set(products);
     });
   }
 
   onHotspotClick(event: { category: string; label: string }): void {
-    this.selectCategory(event.category, event.label);
+    this.selectCategory(event.category);
   }
 
-  onHotspotHover(event: { label: string; x: number; y: number } | null): void {
+  onHotspotHover(event: { category: string; x: number; y: number } | null): void {
     this.tooltip.set(event);
   }
 
@@ -124,9 +133,9 @@ export class Vehicle implements OnInit {
     this.autoRotate.set(isOn);
   }
 
-  onShortcutClick(category: string, label: string): void {
+  onShortcutClick(category: string): void {
     this.sceneView?.focusCategory(category);
-    this.selectCategory(category, label);
+    this.selectCategory(category);
   }
 
   goToView(view: CameraView): void {

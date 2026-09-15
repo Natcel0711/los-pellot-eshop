@@ -1,7 +1,7 @@
 <section class="border-b border-white/5 bg-surface/40">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <h1 class="font-display text-4xl font-bold tracking-wide">PRODUCTOS</h1>
-    <p class="text-sm text-muted mt-2">LEDs y accesorios para tu vehículo — filtra por vehículo o categoría.</p>
+    <h1 class="font-display text-4xl font-bold tracking-wide">{{ i18n.t('products.title') }}</h1>
+    <p class="text-sm text-muted mt-2">{{ i18n.t('products.subtitle') }}</p>
   </div>
 </section>
 
@@ -11,20 +11,20 @@
       class="lg:hidden w-full flex items-center justify-between bg-surface border border-white/10 rounded-xl px-4 py-3 mb-4"
       (click)="toggleFiltersPanel()"
     >
-      <span class="text-sm font-semibold">Filtros</span>
+      <span class="text-sm font-semibold">{{ i18n.t('products.filtersToggle') }}</span>
       <app-icon name="chevronDown" class="w-4 h-4" />
     </button>
 
     <div class="space-y-8 lg:sticky lg:top-28 lg:block" [class.hidden]="!filtersPanelOpen">
       <div>
-        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">TU VEHÍCULO</h3>
+        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">{{ i18n.t('products.yourVehicle') }}</h3>
         <div class="space-y-2">
           <select
             [(ngModel)]="year"
             (ngModelChange)="onYearChange()"
             class="w-full bg-surface border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue"
           >
-            <option value="">Año</option>
+            <option value="">{{ i18n.t('home.year') }}</option>
             @for (y of years; track y) {
               <option [value]="y">{{ y }}</option>
             }
@@ -35,7 +35,7 @@
             [disabled]="makes.length === 0"
             class="w-full bg-surface border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue"
           >
-            <option value="">Marca</option>
+            <option value="">{{ i18n.t('home.make') }}</option>
             @for (m of makes; track m) {
               <option [value]="m">{{ m }}</option>
             }
@@ -46,7 +46,7 @@
             [disabled]="models.length === 0"
             class="w-full bg-surface border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue"
           >
-            <option value="">Modelo</option>
+            <option value="">{{ i18n.t('home.model') }}</option>
             @for (m of models; track m) {
               <option [value]="m">{{ m }}</option>
             }
@@ -55,7 +55,7 @@
       </div>
 
       <div>
-        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">CATEGORÍA</h3>
+        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">{{ i18n.t('products.category') }}</h3>
         <div class="space-y-1">
           @for (category of categories(); track category.id) {
             <label class="flex items-center gap-2 text-sm text-muted hover:text-white cursor-pointer py-1">
@@ -65,25 +65,25 @@
                 [checked]="isCategoryChecked(category.id)"
                 (change)="toggleCategory(category.id, $any($event.target).checked)"
               />
-              {{ category.name }}
+              {{ i18n.categoryLabel(category.id, category.name) }}
             </label>
           }
         </div>
       </div>
 
       <div>
-        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">DISPONIBILIDAD</h3>
+        <h3 class="text-xs font-bold tracking-[0.15em] text-muted mb-3">{{ i18n.t('products.availability') }}</h3>
         <label class="flex items-center gap-2 text-sm text-muted">
           <input
             type="checkbox"
             class="accent-blue w-4 h-4 rounded"
             [(ngModel)]="saleOnly"
             (ngModelChange)="onSaleOnlyChange()"
-          /> Solo ofertas
+          /> {{ i18n.t('products.saleOnly') }}
         </label>
       </div>
 
-      <button class="text-xs text-blue-glow hover:text-white transition" (click)="clearAll()">Limpiar todos los filtros</button>
+      <button class="text-xs text-blue-glow hover:text-white transition" (click)="clearAll()">{{ i18n.t('products.clearFilters') }}</button>
     </div>
   </aside>
 
@@ -91,23 +91,23 @@
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
       <p class="text-sm text-muted">
         @if (loaded()) {
-          Mostrando {{ products().length }} producto{{ products().length === 1 ? '' : 's' }}
+          {{ i18n.t(products().length === 1 ? 'products.showingOne' : 'products.showingMany', { count: products().length }) }}
         } @else {
-          Cargando productos…
+          {{ i18n.t('products.loading') }}
         }
       </p>
       <div class="flex items-center gap-3">
-        <label for="sort" class="text-xs text-muted">Ordenar por</label>
+        <label for="sort" class="text-xs text-muted">{{ i18n.t('products.sortBy') }}</label>
         <select
           id="sort"
           [(ngModel)]="sort"
           (ngModelChange)="onSortChange()"
           class="bg-surface border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue"
         >
-          <option value="relevance">Relevancia</option>
-          <option value="price-asc">Precio: Menor a Mayor</option>
-          <option value="price-desc">Precio: Mayor a Menor</option>
-          <option value="name-asc">Nombre: A–Z</option>
+          <option value="relevance">{{ i18n.t('products.sortRelevance') }}</option>
+          <option value="price-asc">{{ i18n.t('products.sortPriceAsc') }}</option>
+          <option value="price-desc">{{ i18n.t('products.sortPriceDesc') }}</option>
+          <option value="name-asc">{{ i18n.t('products.sortNameAsc') }}</option>
         </select>
       </div>
     </div>
@@ -128,7 +128,7 @@
     @if (vehicleSelected) {
       <div class="flex items-center gap-3 bg-blue/10 border border-blue/30 rounded-xl px-4 py-3 mb-6 text-sm">
         <span class="text-blue-glow"><app-icon name="check" class="w-4 h-4" /></span>
-        <span>Mostrando compatibilidad para tu {{ vehicleLabel }}</span>
+        <span>{{ i18n.t('products.vehicleMatch', { vehicle: vehicleLabel! }) }}</span>
       </div>
     }
 
@@ -137,8 +137,8 @@
         <div class="w-16 h-16 rounded-full bg-surface-2 flex items-center justify-center text-muted mx-auto mb-4">
           <app-icon name="search" class="w-7 h-7" />
         </div>
-        <p class="text-white font-semibold">No encontramos productos con esos filtros</p>
-        <p class="text-sm text-muted mt-1">Intenta ajustar o limpiar los filtros.</p>
+        <p class="text-white font-semibold">{{ i18n.t('products.noResultsTitle') }}</p>
+        <p class="text-sm text-muted mt-1">{{ i18n.t('products.noResultsBody') }}</p>
       </div>
     } @else {
       <div class="grid grid-cols-2 md:grid-cols-3 gap-5">

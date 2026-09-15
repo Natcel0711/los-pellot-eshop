@@ -6,6 +6,7 @@ import { ProductThumb } from '../../shared/product-thumb/product-thumb';
 import { categoryIcon } from '../../shared/category-icons';
 import { Cart } from '../../core/services/cart';
 import { Catalog } from '../../core/services/catalog';
+import { Translation } from '../../core/services/translation';
 import { OrdersApi } from '../../core/api/orders-api';
 import { Category, Order } from '../../shared/models';
 
@@ -22,6 +23,7 @@ export class Checkout {
   protected readonly cart = inject(Cart);
   private readonly catalog = inject(Catalog);
   private readonly ordersApi = inject(OrdersApi);
+  protected readonly i18n = inject(Translation);
 
   protected readonly categoryIcon = categoryIcon;
   protected readonly categories = signal<Category[]>([]);
@@ -34,7 +36,7 @@ export class Checkout {
   }
 
   categoryName(id: string): string {
-    return this.categories().find((c) => c.id === id)?.name ?? id;
+    return this.i18n.categoryLabel(id, this.categories().find((c) => c.id === id)?.name ?? id);
   }
 
   shipping(subtotal: number): number {
@@ -43,8 +45,8 @@ export class Checkout {
 
   freeShippingNote(subtotal: number): string {
     return subtotal >= FREE_SHIPPING_MIN
-      ? 'Tu pedido califica para envío gratis.'
-      : `Añade $${(FREE_SHIPPING_MIN - subtotal).toFixed(2)} más para envío gratis.`;
+      ? this.i18n.t('checkout.freeShippingQualify')
+      : this.i18n.t('checkout.freeShippingAdd', { amount: (FREE_SHIPPING_MIN - subtotal).toFixed(2) });
   }
 
   submit(form: HTMLFormElement): void {
@@ -80,7 +82,7 @@ export class Checkout {
         },
         error: () => {
           this.submitting.set(false);
-          this.error.set('No pudimos procesar tu pedido, intenta de nuevo.');
+          this.error.set(this.i18n.t('checkout.errorGeneric'));
         },
       });
   }

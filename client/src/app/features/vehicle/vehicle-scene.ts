@@ -26,7 +26,7 @@ export type VehicleView = 'front' | 'side' | 'rear';
 
 export interface VehicleSceneOptions {
   onHotspotClick?: (category: string, label: string) => void;
-  onHotspotHover?: (label: string | null, x?: number, y?: number) => void;
+  onHotspotHover?: (category: string | null, x?: number, y?: number) => void;
   onAutoRotateChange?: (isOn: boolean) => void;
 }
 
@@ -280,7 +280,7 @@ export function createVehicleScene(
     if (hit) {
       const rect = container.getBoundingClientRect();
       const data = hit.userData as HotspotUserData;
-      onHotspotHover?.(data.label, e.clientX - rect.left, e.clientY - rect.top);
+      onHotspotHover?.(data.category, e.clientX - rect.left, e.clientY - rect.top);
     } else {
       onHotspotHover?.(null);
     }
