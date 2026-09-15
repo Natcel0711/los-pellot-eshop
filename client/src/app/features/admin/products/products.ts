@@ -34,6 +34,7 @@ export class Products implements OnInit {
   private readonly toast = inject(Toast);
 
   protected readonly categoryIcon = categoryIcon;
+  protected readonly badgeOptions = ['', 'Best Seller', 'Sale', 'New'];
 
   protected readonly products = signal<AdminProduct[]>([]);
   protected readonly categories = signal<AdminCategory[]>([]);
