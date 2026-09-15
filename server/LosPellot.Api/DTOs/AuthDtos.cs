@@ -10,4 +10,4 @@ public record UserDto(string Id, string FullName, string Email, DateTime Created
 
 public record AuthResponse(string AccessToken, string RefreshToken, UserDto User);
 
-public record UpdateProfileRequest(string FullName, string Email);
+public record UpdateProfileRequest(string FullName);

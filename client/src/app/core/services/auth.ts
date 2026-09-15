@@ -66,8 +66,8 @@ export class Auth {
     );
   }
 
-  updateProfile(fullName: string, email: string): Observable<AuthResult> {
-    return this.authApi.updateProfile(fullName, email).pipe(
+  updateProfile(fullName: string): Observable<AuthResult> {
+    return this.authApi.updateProfile(fullName).pipe(
       tap((user) => this.currentUserSubject.next(user)),
       map(() => ({ ok: true }) as AuthResult),
       catchError((err) => of(this.toError(err))),

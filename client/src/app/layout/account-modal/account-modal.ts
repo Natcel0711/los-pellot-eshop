@@ -58,8 +58,8 @@ export class AccountModal {
     });
   }
 
-  submitProfile(name: HTMLInputElement, email: HTMLInputElement): void {
-    this.auth.updateProfile(name.value, email.value).subscribe((res) => {
+  submitProfile(name: HTMLInputElement): void {
+    this.auth.updateProfile(name.value).subscribe((res) => {
       this.message.set(
         res.ok ? { text: this.i18n.t('account.changesSavedMsg'), kind: 'ok' } : { text: res.error!, kind: 'error' },
       );

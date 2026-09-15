@@ -102,21 +102,8 @@ public class AuthController(
         if (user is null) return NotFound();
 
         var fullName = (request.FullName ?? "").Trim();
-        var email = (request.Email ?? "").Trim().ToLowerInvariant();
         if (string.IsNullOrWhiteSpace(fullName))
             return BadRequest(new { error = "Escribe tu nombre." });
-        if (string.IsNullOrWhiteSpace(email))
-            return BadRequest(new { error = "Correo electrónico inválido." });
-
-        if (!string.Equals(email, user.Email, StringComparison.OrdinalIgnoreCase))
-        {
-            var existing = await userManager.FindByEmailAsync(email);
-            if (existing is not null && existing.Id != user.Id)
-                return BadRequest(new { error = "Ese correo ya está en uso." });
-
-            await userManager.SetEmailAsync(user, email);
-            await userManager.SetUserNameAsync(user, email);
-        }
 
         user.FullName = fullName;
         await userManager.UpdateAsync(user);

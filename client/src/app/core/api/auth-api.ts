@@ -27,7 +27,7 @@ export class AuthApi {
     return this.http.get<User>('/api/auth/me');
   }
 
-  updateProfile(fullName: string, email: string): Observable<User> {
-    return this.http.put<User>('/api/auth/me', { fullName, email });
+  updateProfile(fullName: string): Observable<User> {
+    return this.http.put<User>('/api/auth/me', { fullName });
   }
 }
