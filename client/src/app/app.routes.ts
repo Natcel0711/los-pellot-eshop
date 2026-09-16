@@ -34,6 +34,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    // Deliberately a sibling of 'admin', not nested under its layout, so the
+    // printed page contains only the label — no admin sidebar/header chrome.
+    path: 'admin/orders/:orderNumber/label',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./features/admin/orders/shipping-label/shipping-label').then((m) => m.ShippingLabel),
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/admin-layout/admin-layout').then((m) => m.AdminLayout),

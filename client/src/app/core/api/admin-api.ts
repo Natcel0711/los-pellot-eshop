@@ -9,10 +9,14 @@ import {
   AdminMake,
   AdminModel,
   AdminOrder,
+  AdminOrderDetail,
   AdminProduct,
   AdminTrim,
   AdminUser,
   AdminYear,
+  PackageInfo,
+  ShippingLabel,
+  ShippingRate,
   UpsertCategoryRequest,
   UpsertProductRequest,
 } from '../../shared/admin-models';
@@ -139,6 +143,18 @@ export class AdminApi {
   // Orders
   getOrders(): Observable<AdminOrder[]> {
     return this.http.get<AdminOrder[]>('/api/admin/orders');
+  }
+
+  getOrder(orderNumber: string): Observable<AdminOrderDetail> {
+    return this.http.get<AdminOrderDetail>(`/api/admin/orders/${orderNumber}`);
+  }
+
+  getShippingRates(orderNumber: string, pkg: PackageInfo): Observable<ShippingRate[]> {
+    return this.http.post<ShippingRate[]>(`/api/admin/orders/${orderNumber}/shipping/rates`, { package: pkg });
+  }
+
+  purchaseShippingLabel(orderNumber: string, rate: ShippingRate, pkg: PackageInfo): Observable<ShippingLabel> {
+    return this.http.post<ShippingLabel>(`/api/admin/orders/${orderNumber}/shipping/purchase`, { rate, package: pkg });
   }
 
   updateOrderStatus(orderNumber: string, status: string): Observable<AdminOrder> {

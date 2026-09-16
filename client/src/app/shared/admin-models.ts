@@ -1,3 +1,5 @@
+import { OrderItem, ShippingInfo } from './models';
+
 export interface AdminProduct {
   id: string;
   name: string;
@@ -87,6 +89,53 @@ export interface AdminOrder {
   tax: number;
   total: number;
   itemCount: number;
+  createdAt: string;
+}
+
+export interface AdminOrderDetail {
+  orderNumber: string;
+  status: string;
+  paymentStatus: string;
+  customerName: string;
+  customerEmail: string;
+  isGuest: boolean;
+  shipping: ShippingInfo;
+  items: OrderItem[];
+  subtotal: number;
+  shippingCost: number;
+  discount: number;
+  tax: number;
+  total: number;
+  createdAt: string;
+  shippingLabels: ShippingLabel[];
+}
+
+// ---- Real carrier shipping labels (Shippo) ----
+export interface PackageInfo {
+  weightLb: number;
+  lengthIn: number;
+  widthIn: number;
+  heightIn: number;
+}
+
+export interface ShippingRate {
+  rateId: string;
+  carrier: string;
+  serviceLevel: string;
+  amount: number;
+  currency: string;
+  estimatedDays: string | null;
+}
+
+export interface ShippingLabel {
+  provider: string;
+  labelUrl: string;
+  trackingNumber: string;
+  trackingUrlProvider: string | null;
+  carrier: string;
+  serviceLevel: string;
+  amount: number;
+  currency: string;
   createdAt: string;
 }
 

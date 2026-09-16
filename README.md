@@ -75,9 +75,27 @@ Pages: **Panel** (dashboard/stats), **Productos** (full CRUD), **Inventario**
 (dedicated per-product stock editor with a low-stock filter), **Categorías**
 (CRUD), **Vehículos** (manage the year/make/model/trim tree, including
 expandable trim lists per model), **Órdenes** (view all orders, change
-status), **Citas** (installation bookings — change status, delete),
+status; each row links to `/admin/orders/{orderNumber}/label` — a printable
+packing slip plus a real carrier shipping-label purchase flow via Shippo,
+see below), **Citas** (installation bookings — change status, delete),
 **Mensajes** (contact messages — mark handled, delete), **Usuarios** (list,
 promote/demote admin, delete — an admin can't demote or delete themselves).
+
+### Shipping labels
+
+`/admin/orders/{orderNumber}/label` (a route outside the admin layout, so
+printing it doesn't include the sidebar) does two things:
+- Always: a printable packing slip (ship-to address, order contents/totals).
+- If `Shippo:ApiToken` is configured (`appsettings.json`/env var — a free
+  `shippo_test_...` token from [goshippo.com](https://goshippo.com) works for
+  development, no billing info required): real rate shopping and label
+  purchase against USPS/UPS/FedEx via `IShippingLabelService`
+  (`Services/Shipping/`) — enter package weight/dimensions, pick a quoted
+  rate, buy it, get a real tracking number and a Shippo-hosted label PDF.
+  Also needs `ShipFrom:*` filled in with your actual return address (empty
+  by default — there's no real warehouse address to default to). Without a
+  token configured, rate lookups fail with a clean error and the printable
+  packing slip still works on its own.
 
 Backend surface lives in `Controllers/Admin/` (one controller per resource)
 and `DTOs/AdminDtos.cs`; frontend in `features/admin/` with all API calls

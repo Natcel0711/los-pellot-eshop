@@ -3,6 +3,7 @@ using LosPellot.Api.Data;
 using LosPellot.Api.Models;
 using LosPellot.Api.Services;
 using LosPellot.Api.Services.Payments;
+using LosPellot.Api.Services.Shipping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -74,6 +75,19 @@ builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<CartResolver>();
 // The one line a future real gateway (Stripe, etc.) swap changes — see PAYMENT_INTEGRATION.md.
 builder.Services.AddScoped<IPaymentService, MockPaymentService>();
+
+// Real shipping-label purchases via Shippo (https://goshippo.com). Needs
+// Shippo:ApiToken in config (a free `shippo_test_...` token works for
+// development — see README) — never hardcoded.
+builder.Services.AddHttpClient<IShippingLabelService, ShippoLabelService>(client =>
+{
+    client.BaseAddress = new Uri("https://api.goshippo.com/");
+    var shippoToken = builder.Configuration["Shippo:ApiToken"];
+    if (!string.IsNullOrEmpty(shippoToken))
+    {
+        client.DefaultRequestHeaders.Add("Authorization", $"ShippoToken {shippoToken}");
+    }
+});
 
 builder.Services.AddCors(options =>
 {

@@ -1,0 +1,198 @@
+<div class="min-h-screen bg-bg text-white px-4 py-6 sm:px-8 print:bg-white print:p-0">
+  <div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6 print:hidden">
+      <a routerLink="/admin/orders" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-white transition">
+        <app-icon name="chevronRight" class="w-4 h-4 rotate-180" /> Volver a Órdenes
+      </a>
+      @if (order()) {
+        <button
+          (click)="print()"
+          class="px-5 py-2.5 rounded-full bg-blue hover:bg-blue-dark text-sm font-semibold transition"
+        >Imprimir Etiqueta</button>
+      }
+    </div>
+
+    @if (notFound()) {
+      <p class="text-center text-muted py-24">No se encontró esa orden.</p>
+    } @else if (order(); as o) {
+      <div class="mb-8 print:hidden">
+        <h2 class="text-lg font-bold text-white mb-3">Etiqueta de Envío Real (Shippo)</h2>
+
+        @if (o.shippingLabels.length > 0) {
+          <div class="space-y-3 mb-4">
+            @for (label of o.shippingLabels; track label.trackingNumber) {
+              <div class="bg-surface border border-white/10 rounded-xl p-4 flex items-center justify-between flex-wrap gap-3">
+                <div>
+                  <p class="text-white font-semibold">{{ label.carrier }} · {{ label.serviceLevel }}</p>
+                  <p class="text-xs text-muted mt-0.5">
+                    Rastreo: {{ label.trackingNumber }} · {{ label.amount | currency:'USD':'symbol':'1.2-2':'en-US' }} · {{ label.createdAt | date:'medium' }}
+                  </p>
+                </div>
+                <div class="flex items-center gap-3">
+                  @if (label.trackingUrlProvider) {
+                    <a [href]="label.trackingUrlProvider" target="_blank" class="text-xs text-blue-glow hover:text-white transition">Rastrear →</a>
+                  }
+                  <a [href]="label.labelUrl" target="_blank" class="px-4 py-2 rounded-full bg-blue hover:bg-blue-dark text-xs font-semibold transition">Ver / Imprimir PDF</a>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="bg-surface border border-white/10 rounded-xl p-5">
+          <p class="text-xs text-muted mb-4">
+            Cotiza tarifas reales de USPS/UPS/FedEx (vía Shippo) para la dirección de esta orden y compra una etiqueta con rastreo real.
+          </p>
+          <form class="grid grid-cols-2 sm:grid-cols-4 gap-3" #packageForm (submit)="$event.preventDefault(); getRates(packageForm)">
+            <div>
+              <label class="text-xs font-semibold text-muted">Peso (lb)</label>
+              <input name="weightLb" type="number" step="0.1" min="0" required class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-muted">Largo (in)</label>
+              <input name="lengthIn" type="number" step="0.1" min="0" required class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-muted">Ancho (in)</label>
+              <input name="widthIn" type="number" step="0.1" min="0" required class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue" />
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-muted">Alto (in)</label>
+              <input name="heightIn" type="number" step="0.1" min="0" required class="w-full mt-1 bg-surface-2 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue" />
+            </div>
+            <div class="col-span-2 sm:col-span-4">
+              <button type="submit" [disabled]="fetchingRates()" class="px-5 py-2.5 rounded-full bg-blue hover:bg-blue-dark text-sm font-semibold transition disabled:opacity-60">
+                {{ fetchingRates() ? 'Cotizando…' : 'Cotizar Tarifas' }}
+              </button>
+            </div>
+          </form>
+
+          @if (ratesError()) {
+            <p class="text-xs text-amber mt-3">{{ ratesError() }}</p>
+          }
+
+          @if (rates(); as rateList) {
+            @if (rateList.length > 0) {
+              <div class="mt-4 space-y-2">
+                @for (rate of rateList; track rate.rateId) {
+                  <label
+                    class="flex items-center justify-between gap-3 border rounded-lg px-4 py-3 cursor-pointer transition"
+                    [class.border-blue]="selectedRate()?.rateId === rate.rateId"
+                    [class.bg-blue/10]="selectedRate()?.rateId === rate.rateId"
+                    [class.border-white/10]="selectedRate()?.rateId !== rate.rateId"
+                  >
+                    <div class="flex items-center gap-3">
+                      <input type="radio" name="rate" [checked]="selectedRate()?.rateId === rate.rateId" (change)="selectRate(rate)" class="accent-blue" />
+                      <div>
+                        <p class="text-sm text-white font-semibold">{{ rate.carrier }} — {{ rate.serviceLevel }}</p>
+                        @if (rate.estimatedDays) { <p class="text-xs text-muted">{{ rate.estimatedDays }}</p> }
+                      </div>
+                    </div>
+                    <p class="text-sm font-bold text-white">{{ rate.amount | currency:'USD':'symbol':'1.2-2':'en-US' }}</p>
+                  </label>
+                }
+              </div>
+
+              <button
+                (click)="purchaseLabel()"
+                [disabled]="!selectedRate() || purchasing()"
+                class="mt-4 px-5 py-2.5 rounded-full bg-blue hover:bg-blue-dark text-sm font-semibold transition disabled:opacity-40"
+              >{{ purchasing() ? 'Comprando…' : 'Comprar Etiqueta' }}</button>
+
+              @if (purchaseError()) {
+                <p class="text-xs text-amber mt-3">{{ purchaseError() }}</p>
+              }
+            }
+          }
+        </div>
+      </div>
+
+      <div class="bg-white text-black rounded-2xl border border-black/10 p-8 print:rounded-none print:border-0 print:p-0">
+        <!-- Shipping label block -->
+        <div class="border-2 border-black rounded-xl p-6 mb-8">
+          <div class="flex items-start justify-between pb-4 mb-4 border-b border-black/20">
+            <div class="text-xs leading-relaxed">
+              <p class="font-bold tracking-wide">DE:</p>
+              <p>{{ shipFrom.name }}</p>
+              <p>{{ shipFrom.address }}</p>
+              <p>{{ shipFrom.phone }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] font-bold tracking-widest text-black/60">ORDEN</p>
+              <p class="text-xl font-bold font-display">#{{ o.orderNumber }}</p>
+              <p class="text-[11px] text-black/60">{{ o.createdAt | date: 'mediumDate' }}</p>
+            </div>
+          </div>
+
+          <p class="text-xs font-bold tracking-wide mb-1">ENVIAR A:</p>
+          <p class="text-2xl font-bold leading-snug">{{ o.shipping.name }}</p>
+          <p class="text-lg leading-snug">
+            {{ o.shipping.address }}@if (o.shipping.apt) { <span>, {{ o.shipping.apt }}</span> }
+          </p>
+          <p class="text-lg leading-snug">{{ o.shipping.city }}, {{ o.shipping.state }} {{ o.shipping.zip }}</p>
+          <p class="text-lg leading-snug">{{ o.shipping.country }}</p>
+          <p class="text-sm mt-2 text-black/70">Tel: {{ o.shipping.phone }}</p>
+        </div>
+
+        <!-- Package details (fill in by hand or before printing) -->
+        <div class="grid grid-cols-3 gap-4 mb-8 text-sm">
+          <div>
+            <label class="text-[11px] font-bold tracking-wide text-black/60">PESO</label>
+            <input type="text" placeholder="___ lb" class="w-full mt-1 border-b border-black/40 focus:outline-none focus:border-black py-1 bg-transparent" />
+          </div>
+          <div>
+            <label class="text-[11px] font-bold tracking-wide text-black/60">DIMENSIONES</label>
+            <input type="text" placeholder="___ x ___ x ___ in" class="w-full mt-1 border-b border-black/40 focus:outline-none focus:border-black py-1 bg-transparent" />
+          </div>
+          <div>
+            <label class="text-[11px] font-bold tracking-wide text-black/60">SERVICIO</label>
+            <input type="text" placeholder="USPS / UPS / FedEx" class="w-full mt-1 border-b border-black/40 focus:outline-none focus:border-black py-1 bg-transparent" />
+          </div>
+        </div>
+
+        <!-- Packing list -->
+        <p class="text-xs font-bold tracking-wide mb-2">CONTENIDO DEL PAQUETE</p>
+        <table class="w-full text-sm mb-4">
+          <thead>
+            <tr class="text-left text-[11px] text-black/60 border-b border-black/20">
+              <th class="py-1.5 font-semibold">Producto</th>
+              <th class="py-1.5 font-semibold text-center">Cant.</th>
+              <th class="py-1.5 font-semibold text-right">Precio</th>
+              <th class="py-1.5 font-semibold text-right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of o.items; track item.productId + (item.vehicleLabel ?? '')) {
+              <tr class="border-b border-black/10">
+                <td class="py-1.5">{{ item.productName }}{{ item.vehicleLabel ? ' · ' + item.vehicleLabel : '' }}</td>
+                <td class="py-1.5 text-center">{{ item.qty }}</td>
+                <td class="py-1.5 text-right">{{ item.unitPrice | currency:'USD':'symbol':'1.2-2':'en-US' }}</td>
+                <td class="py-1.5 text-right">{{ item.unitPrice * item.qty | currency:'USD':'symbol':'1.2-2':'en-US' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <div class="flex justify-end">
+          <div class="w-56 text-sm space-y-1">
+            <div class="flex items-center justify-between"><span class="text-black/60">Subtotal</span><span>{{ o.subtotal | currency:'USD':'symbol':'1.2-2':'en-US' }}</span></div>
+            @if (o.discount) {
+              <div class="flex items-center justify-between"><span class="text-black/60">Descuento</span><span>-{{ o.discount | currency:'USD':'symbol':'1.2-2':'en-US' }}</span></div>
+            }
+            <div class="flex items-center justify-between"><span class="text-black/60">Envío</span><span>{{ o.shippingCost | currency:'USD':'symbol':'1.2-2':'en-US' }}</span></div>
+            @if (o.tax) {
+              <div class="flex items-center justify-between"><span class="text-black/60">Impuesto</span><span>{{ o.tax | currency:'USD':'symbol':'1.2-2':'en-US' }}</span></div>
+            }
+            <div class="flex items-center justify-between font-bold text-base pt-1 border-t border-black/20"><span>Total</span><span>{{ o.total | currency:'USD':'symbol':'1.2-2':'en-US' }}</span></div>
+          </div>
+        </div>
+
+        <p class="text-[10px] text-black/40 mt-8 pt-3 border-t border-black/10">
+          {{ o.customerEmail }} @if (o.isGuest) { · pedido de invitado } · Etiqueta generada {{ printedAt | date: 'medium' }}
+        </p>
+      </div>
+    } @else {
+      <p class="text-center text-muted py-24">Cargando…</p>
+    }
+  </div>
+</div>

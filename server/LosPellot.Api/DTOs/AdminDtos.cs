@@ -44,6 +44,30 @@ public record AdminOrderDto(
 );
 public record UpdateOrderStatusRequest(string Status);
 
+// Full detail for one order — used by the shipping-label view, which needs
+// the full address and item list that the list endpoint's flatter
+// AdminOrderDto doesn't carry.
+public record AdminOrderDetailDto(
+    string OrderNumber, string Status, string PaymentStatus, string CustomerName, string CustomerEmail,
+    bool IsGuest, ShippingInfo Shipping, List<OrderItemDto> Items,
+    decimal Subtotal, decimal ShippingCost, decimal Discount, decimal Tax, decimal Total, DateTime CreatedAt,
+    List<ShippingLabelDto> ShippingLabels
+);
+
+// ---- Real carrier shipping labels (Shippo) ----
+public record PackageRequest(decimal WeightLb, decimal LengthIn, decimal WidthIn, decimal HeightIn);
+
+public record ShippingRateDto(string RateId, string Carrier, string ServiceLevel, decimal Amount, string Currency, string? EstimatedDays);
+
+public record GetShippingRatesRequest(PackageRequest Package);
+
+public record PurchaseShippingLabelRequest(ShippingRateDto Rate, PackageRequest Package);
+
+public record ShippingLabelDto(
+    string Provider, string LabelUrl, string TrackingNumber, string? TrackingUrlProvider,
+    string Carrier, string ServiceLevel, decimal Amount, string Currency, DateTime CreatedAt
+);
+
 // ---- Bookings ----
 public record AdminBookingDto(
     int Id, string Name, string Phone, string Email, string VehicleDescription,

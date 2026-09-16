@@ -40,6 +40,7 @@
         </th>
         <th class="px-4 py-3 font-semibold">Pago</th>
         <th class="px-4 py-3 font-semibold">Estado</th>
+        <th class="px-4 py-3 font-semibold"></th>
       </tr>
     </thead>
     <tbody>
@@ -81,9 +82,18 @@
               </select>
             }
           </td>
+          <td class="px-4 py-3 text-right whitespace-nowrap">
+            <a
+              [routerLink]="['/admin/orders', order.orderNumber, 'label']"
+              target="_blank"
+              aria-label="Ver etiqueta de envío"
+              title="Etiqueta de envío"
+              class="inline-flex text-muted hover:text-white p-1.5"
+            ><app-icon name="truck" class="w-4 h-4" /></a>
+          </td>
         </tr>
       } @empty {
-        <tr><td colspan="7" class="px-4 py-8 text-center text-muted">Sin resultados.</td></tr>
+        <tr><td colspan="8" class="px-4 py-8 text-center text-muted">Sin resultados.</td></tr>
       }
     </tbody>
   </table>

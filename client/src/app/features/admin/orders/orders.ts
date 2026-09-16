@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Icon } from '../../../shared/icon/icon';
 import { Pagination } from '../../../shared/pagination/pagination';
 import { AdminApi } from '../../../core/api/admin-api';
@@ -20,7 +21,7 @@ const SORTERS: Record<SortKey, Sorter<AdminOrder>> = {
 
 @Component({
   selector: 'app-orders',
-  imports: [CurrencyPipe, DatePipe, FormsModule, Icon, Pagination],
+  imports: [CurrencyPipe, DatePipe, FormsModule, RouterLink, Icon, Pagination],
   styleUrl: './orders.css',
   templateUrl: './orders.html',
 })

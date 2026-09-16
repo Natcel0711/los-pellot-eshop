@@ -19,6 +19,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<ShippingLabel> ShippingLabels => Set<ShippingLabel>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
@@ -96,5 +97,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .Property(p => p.Amount).HasColumnType("decimal(10,2)");
         builder.Entity<Payment>()
             .HasIndex(p => p.IdempotencyKey).IsUnique();
+
+        builder.Entity<ShippingLabel>()
+            .HasOne(s => s.Order)
+            .WithMany(o => o.ShippingLabels)
+            .HasForeignKey(s => s.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<ShippingLabel>()
+            .Property(s => s.Amount).HasColumnType("decimal(10,2)");
+        builder.Entity<ShippingLabel>()
+            .Property(s => s.WeightLb).HasColumnType("decimal(10,2)");
+        builder.Entity<ShippingLabel>()
+            .Property(s => s.LengthIn).HasColumnType("decimal(10,2)");
+        builder.Entity<ShippingLabel>()
+            .Property(s => s.WidthIn).HasColumnType("decimal(10,2)");
+        builder.Entity<ShippingLabel>()
+            .Property(s => s.HeightIn).HasColumnType("decimal(10,2)");
     }
 }

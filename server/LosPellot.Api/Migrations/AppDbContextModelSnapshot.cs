@@ -523,6 +523,71 @@ namespace LosPellot.Api.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("LosPellot.Api.Models.ShippingLabel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Carrier")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("HeightIn")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("LabelUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("LengthIn")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProviderTransactionId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ServiceLevel")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TrackingNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TrackingUrlProvider")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("WeightLb")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("WidthIn")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("ShippingLabels");
+                });
+
             modelBuilder.Entity("LosPellot.Api.Models.VehicleMake", b =>
                 {
                     b.Property<int>("Id")
@@ -788,6 +853,17 @@ namespace LosPellot.Api.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("LosPellot.Api.Models.ShippingLabel", b =>
+                {
+                    b.HasOne("LosPellot.Api.Models.Order", "Order")
+                        .WithMany("ShippingLabels")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("LosPellot.Api.Models.VehicleModel", b =>
                 {
                     b.HasOne("LosPellot.Api.Models.VehicleMake", "Make")
@@ -884,6 +960,8 @@ namespace LosPellot.Api.Migrations
                     b.Navigation("Items");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("ShippingLabels");
                 });
 
             modelBuilder.Entity("LosPellot.Api.Models.Product", b =>

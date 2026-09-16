@@ -63,6 +63,7 @@ public class Order
 
     public List<OrderItem> Items { get; set; } = [];
     public List<Payment> Payments { get; set; } = [];
+    public List<ShippingLabel> ShippingLabels { get; set; } = [];
 }
 
 public class OrderItem
@@ -95,4 +96,29 @@ public class Payment
     public string? FailureReason { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+}
+
+// One row per purchased carrier label (real postage, via IShippingLabelService
+// — Shippo today). Unlike Payment there's no "attempt" concept here: a row
+// only exists once a label has actually been bought, since a failed rate
+// lookup has nothing worth persisting.
+public class ShippingLabel
+{
+    public int Id { get; set; }
+    public int OrderId { get; set; }
+    public Order? Order { get; set; }
+    public string Provider { get; set; } = "shippo";
+    public string ProviderTransactionId { get; set; } = string.Empty;
+    public string LabelUrl { get; set; } = string.Empty;
+    public string TrackingNumber { get; set; } = string.Empty;
+    public string? TrackingUrlProvider { get; set; }
+    public string Carrier { get; set; } = string.Empty;
+    public string ServiceLevel { get; set; } = string.Empty;
+    public decimal Amount { get; set; }
+    public string Currency { get; set; } = "usd";
+    public decimal WeightLb { get; set; }
+    public decimal LengthIn { get; set; }
+    public decimal WidthIn { get; set; }
+    public decimal HeightIn { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
