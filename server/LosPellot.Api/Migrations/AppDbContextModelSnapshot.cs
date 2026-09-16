@@ -257,11 +257,27 @@ namespace LosPellot.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("GuestEmail")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdempotencyKey")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OrderNumber")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ProviderReference")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ShippingAddress")
@@ -308,10 +324,16 @@ namespace LosPellot.Api.Migrations
                     b.Property<decimal>("Subtotal")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
 
                     b.HasIndex("OrderNumber")
                         .IsUnique();
@@ -350,6 +372,55 @@ namespace LosPellot.Api.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("LosPellot.Api.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdempotencyKey")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProviderPaymentIntentId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("LosPellot.Api.Models.Product", b =>
@@ -684,6 +755,17 @@ namespace LosPellot.Api.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("LosPellot.Api.Models.Payment", b =>
+                {
+                    b.HasOne("LosPellot.Api.Models.Order", "Order")
+                        .WithMany("Payments")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("LosPellot.Api.Models.Product", b =>
                 {
                     b.HasOne("LosPellot.Api.Models.Category", "Category")
@@ -800,6 +882,8 @@ namespace LosPellot.Api.Migrations
             modelBuilder.Entity("LosPellot.Api.Models.Order", b =>
                 {
                     b.Navigation("Items");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("LosPellot.Api.Models.Product", b =>

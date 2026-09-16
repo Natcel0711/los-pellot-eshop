@@ -77,11 +77,14 @@ export interface AdminUser {
 export interface AdminOrder {
   orderNumber: string;
   status: string;
+  paymentStatus: string;
   customerName: string;
   customerEmail: string;
   isGuest: boolean;
   subtotal: number;
   shippingCost: number;
+  discount: number;
+  tax: number;
   total: number;
   itemCount: number;
   createdAt: string;
@@ -121,5 +124,10 @@ export interface AdminDashboard {
   unhandledContactCount: number;
 }
 
-export const ORDER_STATUSES = ['Received', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const;
+// Settable values only — PendingPayment is a computed lifecycle state the
+// backend rejects if set manually (see AdminOrdersController.UpdateStatus).
+export const ORDER_STATUS_OPTIONS = ['Received', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] as const;
+// Includes PendingPayment since orders can genuinely be filtered to that state.
+export const ORDER_STATUS_FILTERS = ['Received', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'PendingPayment'] as const;
+export const PAYMENT_STATUSES = ['Pending', 'Processing', 'Paid', 'Failed', 'Cancelled', 'Refunded'] as const;
 export const BOOKING_STATUSES = ['Pending', 'Confirmed', 'Cancelled'] as const;

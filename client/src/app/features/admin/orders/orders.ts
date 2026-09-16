@@ -5,7 +5,7 @@ import { Icon } from '../../../shared/icon/icon';
 import { Pagination } from '../../../shared/pagination/pagination';
 import { AdminApi } from '../../../core/api/admin-api';
 import { Toast } from '../../../core/services/toast';
-import { AdminOrder, ORDER_STATUSES } from '../../../shared/admin-models';
+import { AdminOrder, ORDER_STATUS_FILTERS, ORDER_STATUS_OPTIONS } from '../../../shared/admin-models';
 import { Sorter, matchesQuery, paginate, sortRows, totalPages } from '../../../shared/table-utils';
 
 const PAGE_SIZE = 10;
@@ -29,7 +29,8 @@ export class Orders implements OnInit {
   private readonly toast = inject(Toast);
 
   protected readonly orders = signal<AdminOrder[]>([]);
-  protected readonly statuses = ORDER_STATUSES;
+  protected readonly statusFilters = ORDER_STATUS_FILTERS;
+  protected readonly settableStatuses = ORDER_STATUS_OPTIONS;
 
   protected readonly search = signal('');
   protected readonly statusFilter = signal('');

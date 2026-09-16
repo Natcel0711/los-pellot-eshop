@@ -4,11 +4,15 @@ import { tap } from 'rxjs';
 import { TokenStore } from '../services/token-store';
 
 const GUEST_TOKEN_HEADER = 'X-Guest-Cart-Token';
+// Checkout (both phases) resolves the same server-side cart as /api/cart, so
+// it needs the same guest-identity header — without this, guest checkout
+// can never find the guest's cart.
+const GUEST_TOKEN_URL_PREFIXES = ['/api/cart', '/api/orders'];
 
-// Attaches the stored guest cart token to /api/cart requests and captures a
+// Attaches the stored guest cart token to cart/order requests and captures a
 // newly minted one from the response the first time a guest adds an item.
 export const guestCartInterceptor: HttpInterceptorFn = (req, next) => {
-  if (!req.url.startsWith('/api/cart')) return next(req);
+  if (!GUEST_TOKEN_URL_PREFIXES.some((prefix) => req.url.startsWith(prefix))) return next(req);
 
   const tokenStore = inject(TokenStore);
   const guestToken = tokenStore.guestCartToken;

@@ -18,6 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<CartItem> CartItems => Set<CartItem>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
@@ -69,9 +70,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.Entity<Order>()
             .HasIndex(o => o.OrderNumber).IsUnique();
         builder.Entity<Order>()
+            .HasIndex(o => o.IdempotencyKey).IsUnique();
+        builder.Entity<Order>()
             .Property(o => o.Subtotal).HasColumnType("decimal(10,2)");
         builder.Entity<Order>()
             .Property(o => o.ShippingCost).HasColumnType("decimal(10,2)");
+        builder.Entity<Order>()
+            .Property(o => o.Discount).HasColumnType("decimal(10,2)");
+        builder.Entity<Order>()
+            .Property(o => o.Tax).HasColumnType("decimal(10,2)");
         builder.Entity<OrderItem>()
             .HasOne(i => i.Order)
             .WithMany(o => o.Items)
@@ -79,5 +86,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             .OnDelete(DeleteBehavior.Cascade);
         builder.Entity<OrderItem>()
             .Property(i => i.UnitPriceSnapshot).HasColumnType("decimal(10,2)");
+
+        builder.Entity<Payment>()
+            .HasOne(p => p.Order)
+            .WithMany(o => o.Payments)
+            .HasForeignKey(p => p.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<Payment>()
+            .Property(p => p.Amount).HasColumnType("decimal(10,2)");
+        builder.Entity<Payment>()
+            .HasIndex(p => p.IdempotencyKey).IsUnique();
     }
 }

@@ -29,6 +29,8 @@ public class AdminOrdersController(AppDbContext db) : ControllerBase
     {
         if (!Enum.TryParse<OrderStatus>(request.Status, ignoreCase: true, out var status))
             return BadRequest(new { error = "Estado inválido." });
+        if (status == OrderStatus.PendingPayment)
+            return BadRequest(new { error = "No se puede establecer manualmente este estado." });
 
         var order = await db.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
         if (order is null) return NotFound();
@@ -47,8 +49,9 @@ public class AdminOrdersController(AppDbContext db) : ControllerBase
         var customerEmail = isGuest ? (o.GuestEmail ?? o.ShippingEmail) : o.ShippingEmail;
 
         return new AdminOrderDto(
-            o.OrderNumber, o.Status.ToString(), customerName, customerEmail, isGuest,
-            o.Subtotal, o.ShippingCost, o.Subtotal + o.ShippingCost, o.Items.Sum(i => i.Qty), o.CreatedAt
+            o.OrderNumber, o.Status.ToString(), o.PaymentStatus.ToString(), customerName, customerEmail, isGuest,
+            o.Subtotal, o.ShippingCost, o.Discount, o.Tax, o.Subtotal - o.Discount + o.ShippingCost + o.Tax,
+            o.Items.Sum(i => i.Qty), o.CreatedAt
         );
     }
 }

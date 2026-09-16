@@ -2,6 +2,7 @@ using System.Text;
 using LosPellot.Api.Data;
 using LosPellot.Api.Models;
 using LosPellot.Api.Services;
+using LosPellot.Api.Services.Payments;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
@@ -71,6 +72,8 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<CartResolver>();
+// The one line a future real gateway (Stripe, etc.) swap changes — see PAYMENT_INTEGRATION.md.
+builder.Services.AddScoped<IPaymentService, MockPaymentService>();
 
 builder.Services.AddCors(options =>
 {

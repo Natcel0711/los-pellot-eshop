@@ -48,7 +48,7 @@ Open `http://localhost:4200`.
 | `/vehicle` | Interactive **3D** vehicle configurator (Three.js) — select a vehicle, click a glowing zone |
 | `/installation` | Services, pricing, real booking form |
 | `/contact` | Real contact form |
-| `/checkout` | Cart review, shipping/payment, real order creation |
+| `/checkout` | Two-step checkout: shipping (creates a pending order) → payment (confirms it) |
 | `/account/orders` | Order history (requires login) |
 | `/admin` | Admin panel — see below (requires an admin account) |
 
@@ -87,7 +87,7 @@ consolidated in `core/api/admin-api.ts`.
 
 - `Models/` — EF Core entities: `Category`, `Product`, `ProductFitment`,
   `VehicleYear`/`VehicleMake`/`VehicleModel`/`VehicleTrim`, `CartHeader`/`CartItem`,
-  `Order`/`OrderItem`, `Booking`, `ContactMessage`, `ApplicationUser`, `RefreshToken`.
+  `Order`/`OrderItem`/`Payment`, `Booking`, `ContactMessage`, `ApplicationUser`, `RefreshToken`.
 - `Data/AppDbContext.cs` — the EF Core context (extends `IdentityDbContext`).
 - `Data/SeedData.cs` — seeds categories/vehicles/products from the original
   site's data on first run in development.
@@ -95,13 +95,21 @@ consolidated in `core/api/admin-api.ts`.
   `CategoriesController`, `ProductsController` (filtering/sorting),
   `VehiclesController` (year→make→model→trim tree), `CartController`
   (guest-token or JWT-user cart, merge-on-login), `OrdersController`
-  (checkout, order history), `BookingsController`, `ContactController`.
+  (two-phase checkout — create pending order, then confirm payment — plus
+  order history), `BookingsController`, `ContactController`.
 - `Services/JwtTokenService.cs`, `Services/CartResolver.cs` — shared logic
   used by multiple controllers.
+- `Services/Payments/IPaymentService.cs` — the payment-provider abstraction;
+  `MockPaymentService` is the only implementation today (dev/test only, no
+  real gateway). See `PAYMENT_INTEGRATION.md` at the repo root for exactly
+  what's involved in swapping in a real one (Stripe or otherwise).
 
 Cart works for both guests (an `X-Guest-Cart-Token` header, minted on first
 write) and logged-in users (tied to their account, merged from any guest
-cart on login) — see `CartController`/`CartResolver`.
+cart on login) — see `CartController`/`CartResolver`. Checkout re-resolves
+this same server-side cart and never trusts client-supplied prices/quantities
+— see `PAYMENT_INTEGRATION.md` for the full checkout/payment/inventory
+design (idempotency, atomic stock decrement, order vs. payment status).
 
 ### Migrations
 
@@ -109,6 +117,20 @@ cart on login) — see `CartController`/`CartResolver`.
 cd server/LosPellot.Api
 dotnet ef migrations add <Name>
 dotnet ef database update
+```
+
+### Tests
+
+`server/LosPellot.Api.Tests` (xUnit) covers the checkout/payment/inventory
+business logic against a real in-memory SQLite connection (not EF's
+`InMemory` provider — the atomic stock-decrement logic relies on
+`ExecuteUpdateAsync`, which needs a real relational provider): successful
+checkout, payment failure + retry, insufficient inventory (both at checkout
+and the rarer stock-ran-out-mid-payment race), concurrent purchase of the
+last unit, price-manipulation resistance, and idempotent request replay.
+
+```
+dotnet test server/LosPellot.Api.Tests
 ```
 
 ### Configuration
@@ -153,9 +175,13 @@ in mind when adding new async state.
   selection can genuinely filter products, but only universal products are
   seeded with a (wildcard) fitment row today — non-universal products need
   real fitment data entered before vehicle filtering is fully useful.
-- **Payment**: checkout accepts and shape-validates card fields but does not
-  integrate a real payment gateway (Stripe, etc.) — orders are persisted
-  without actually charging anything.
+- **Payment**: checkout/order/inventory is real (server-side validation,
+  authoritative pricing, atomic stock decrement, idempotent requests, a
+  proper `Payment` model with its own status distinct from order status),
+  but the actual payment gateway is mocked (`MockPaymentService`) — no real
+  charge is ever made. See `PAYMENT_INTEGRATION.md` for exactly what's left
+  to connect a real provider (Stripe or otherwise); the mock is designed as
+  a one-line `Program.cs` swap plus a webhook controller, not a rewrite.
 - **Single admin flag, no granular roles**: `ApplicationUser.IsAdmin` is a
   simple bool, not a full role/permission system — fine for one or two
   trusted admins, not for tiered staff permissions.

@@ -38,8 +38,9 @@ public record UpdateUserAdminRequest(bool IsAdmin);
 
 // ---- Orders ----
 public record AdminOrderDto(
-    string OrderNumber, string Status, string CustomerName, string CustomerEmail,
-    bool IsGuest, decimal Subtotal, decimal ShippingCost, decimal Total, int ItemCount, DateTime CreatedAt
+    string OrderNumber, string Status, string PaymentStatus, string CustomerName, string CustomerEmail,
+    bool IsGuest, decimal Subtotal, decimal ShippingCost, decimal Discount, decimal Tax, decimal Total,
+    int ItemCount, DateTime CreatedAt
 );
 public record UpdateOrderStatusRequest(string Status);
 

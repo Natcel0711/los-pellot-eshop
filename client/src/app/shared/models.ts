@@ -107,13 +107,24 @@ export interface OrderItem {
   vehicleLabel: string | null;
 }
 
+export type SimulateOutcome = 'Succeed' | 'Fail' | 'Cancel';
+
 export interface Order {
   orderNumber: string;
   status: string;
+  paymentStatus: string;
   shipping: ShippingInfo;
   items: OrderItem[];
   subtotal: number;
   shippingCost: number;
+  discount: number;
+  tax: number;
+  currency: string;
   total: number;
   createdAt: string;
+  // True only while the active backend payment provider is the mock —
+  // drives whether the checkout UI shows its dev-only simulate-outcome
+  // controls. Automatically false once a real provider (e.g. Stripe) is wired up.
+  allowSimulatedOutcomes: boolean;
+  paymentReference: string | null;
 }
