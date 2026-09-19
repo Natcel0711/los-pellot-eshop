@@ -6,9 +6,10 @@ import { Footer } from './layout/footer/footer';
 import { CartDrawer } from './layout/cart-drawer/cart-drawer';
 import { AccountModal } from './layout/account-modal/account-modal';
 import { ToastHost } from './layout/toast-host/toast-host';
+import { LoadingBar } from './layout/loading-bar/loading-bar';
 
 @Component({
-  imports: [RouterOutlet, Header, Footer, CartDrawer, AccountModal, ToastHost],
+  imports: [RouterOutlet, Header, Footer, CartDrawer, AccountModal, ToastHost, LoadingBar],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
