@@ -1,24 +1,30 @@
-# .NET
-server/**/bin/
-server/**/obj/
-*.user
+node_modules
 
-# SQLite dev database
-server/**/*.db
-server/**/*.db-shm
-server/**/*.db-wal
+# Build output
+.output
+.vercel
+/.svelte-kit
+/build
 
-# Uploaded product images (local dev only — same ephemeral-disk story as the
-# SQLite db; not meant to be committed)
-server/LosPellot.Api/wwwroot/uploads/
+# Env (secrets) — .env.example is the committed template
+.env
+.env.*
+!.env.example
 
-# IDEs and editors
-.vs/
-.idea/
+# Local SQLite database
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
 
-# Local dev convenience scripts
-dev.ps1
+# Product photos uploaded in local dev (production uses Vercel Blob)
+/uploads/
 
-# System files
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# OS / editors
 .DS_Store
 Thumbs.db
+.idea/

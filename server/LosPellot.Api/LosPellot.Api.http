@@ -1,6 +1,0 @@
-@LosPellot.Api_HostAddress = http://localhost:5149
-
-GET {{LosPellot.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
