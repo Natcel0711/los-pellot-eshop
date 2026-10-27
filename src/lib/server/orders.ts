@@ -17,6 +17,7 @@
 
 import { and, asc, desc, eq, gte, inArray, sql, type SQL } from 'drizzle-orm';
 import type { Order, PaymentInfo, ShippingInfo, SimulateOutcome } from '../types.ts';
+import { countryForState, isUsState, ZIP_PATTERN } from '../us-states.ts';
 import { findCartId, loadCartLines, type CartOwner } from './cart.ts';
 import { retryIfBusy, type DB } from './db/client.ts';
 import { carts, cartItems, orderItems, orders, payments, products } from './db/schema.ts';
@@ -104,8 +105,12 @@ async function generateOrderNumber(db: DB): Promise<string> {
 	return 'LP-' + crypto.randomUUID().replaceAll('-', '').slice(0, 8).toUpperCase();
 }
 
-function cleanShipping(s: ShippingInfo): ShippingInfo {
+// The country isn't asked for: it follows from the state (PR or a US state).
+export type ShippingInput = Omit<ShippingInfo, 'country'>;
+
+function cleanShipping(s: ShippingInput): ShippingInfo {
 	const t = (v: string | null | undefined) => (v ?? '').trim();
+	const state = t(s.state).toUpperCase();
 	const cleaned = {
 		name: t(s.name),
 		email: t(s.email),
@@ -113,13 +118,17 @@ function cleanShipping(s: ShippingInfo): ShippingInfo {
 		address: t(s.address),
 		apt: t(s.apt) || null,
 		city: t(s.city),
-		state: t(s.state),
+		state,
 		zip: t(s.zip),
-		country: t(s.country)
+		country: countryForState(state)
 	};
 	const { apt: _optional, ...required } = cleaned;
 	if (Object.values(required).some((v) => !v)) {
 		throw new OrderError(400, 'Completa todos los campos requeridos.');
+	}
+	if (!isUsState(cleaned.state)) throw new OrderError(400, 'Selecciona un estado válido.');
+	if (!ZIP_PATTERN.test(cleaned.zip)) {
+		throw new OrderError(400, 'El código postal debe tener 5 dígitos (ej. 00901).');
 	}
 	return cleaned;
 }
@@ -129,7 +138,7 @@ function cleanShipping(s: ShippingInfo): ShippingInfo {
 export async function createOrder(
 	db: DB,
 	provider: PaymentProvider,
-	input: { owner: CartOwner; shipping: ShippingInfo; idempotencyKey: string | null }
+	input: { owner: CartOwner; shipping: ShippingInput; idempotencyKey: string | null }
 ): Promise<Order> {
 	const { owner, idempotencyKey } = input;
 

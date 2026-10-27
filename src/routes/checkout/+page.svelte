@@ -6,6 +6,7 @@
 	import { currency } from '#lib/format.ts';
 	import { getI18n } from '#lib/state/i18n.svelte.ts';
 	import type { SimulateOutcome } from '#lib/types.ts';
+	import { US_STATES } from '#lib/us-states.ts';
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
@@ -304,7 +305,14 @@
 					<div class="grid gap-5 sm:grid-cols-2">
 						<div class="sm:col-span-2">
 							<label for="s-name" class={labelClass}>{i18n.t('checkout.fullName')}</label>
-							<input id="s-name" name="name" required type="text" class={fieldClass} />
+							<input
+								id="s-name"
+								name="name"
+								required
+								type="text"
+								autocomplete="shipping name"
+								class={fieldClass}
+							/>
 						</div>
 						<div>
 							<label for="s-email" class={labelClass}>{i18n.t('checkout.email')}</label>
@@ -313,40 +321,83 @@
 								name="email"
 								required
 								type="email"
+								autocomplete="email"
 								value={data.user?.email ?? ''}
 								class={fieldClass}
 							/>
 						</div>
 						<div>
 							<label for="s-phone" class={labelClass}>{i18n.t('checkout.phone')}</label>
-							<input id="s-phone" name="phone" required type="tel" class={fieldClass} />
+							<input
+								id="s-phone"
+								name="phone"
+								required
+								type="tel"
+								autocomplete="shipping tel"
+								class={fieldClass}
+							/>
 						</div>
 						<div class="sm:col-span-2">
 							<label for="s-address" class={labelClass}>{i18n.t('checkout.address')}</label>
-							<input id="s-address" name="address" required type="text" class={fieldClass} />
+							<input
+								id="s-address"
+								name="address"
+								required
+								type="text"
+								autocomplete="shipping address-line1"
+								class={fieldClass}
+							/>
 						</div>
 						<div class="sm:col-span-2">
 							<label for="s-apt" class={labelClass}>{i18n.t('checkout.aptOptional')}</label>
-							<input id="s-apt" name="apt" type="text" class={fieldClass} />
+							<input
+								id="s-apt"
+								name="apt"
+								type="text"
+								autocomplete="shipping address-line2"
+								class={fieldClass}
+							/>
 						</div>
-						<div>
+						<div class="sm:col-span-2">
 							<label for="s-city" class={labelClass}>{i18n.t('checkout.city')}</label>
-							<input id="s-city" name="city" required type="text" class={fieldClass} />
+							<input
+								id="s-city"
+								name="city"
+								required
+								type="text"
+								autocomplete="shipping address-level2"
+								class={fieldClass}
+							/>
 						</div>
 						<div>
 							<label for="s-state" class={labelClass}>{i18n.t('checkout.state')}</label>
-							<input id="s-state" name="state" required type="text" class={fieldClass} />
+							<select
+								id="s-state"
+								name="state"
+								required
+								autocomplete="shipping address-level1"
+								class={fieldClass}
+							>
+								{#each US_STATES as s (s.code)}
+									<option value={s.code}>{s.name}</option>
+								{/each}
+							</select>
 						</div>
 						<div>
 							<label for="s-zip" class={labelClass}>{i18n.t('checkout.zip')}</label>
-							<input id="s-zip" name="zip" required type="text" class={fieldClass} />
-						</div>
-						<div>
-							<label for="s-country" class={labelClass}>{i18n.t('checkout.country')}</label>
-							<select id="s-country" name="country" required class={fieldClass}>
-								<option>Puerto Rico</option>
-								<option>{i18n.t('checkout.countryUS')}</option>
-							</select>
+							<input
+								id="s-zip"
+								name="zip"
+								required
+								type="text"
+								inputmode="numeric"
+								maxlength="10"
+								pattern={'\\d{5}(-\\d{4})?'}
+								title={i18n.t('checkout.zipHint')}
+								placeholder="00901"
+								autocomplete="shipping postal-code"
+								class={fieldClass}
+							/>
 						</div>
 					</div>
 				</div>

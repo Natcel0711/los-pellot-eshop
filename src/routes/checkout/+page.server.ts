@@ -73,8 +73,7 @@ export const actions: Actions = {
 			apt: field('apt') || null,
 			city: field('city'),
 			state: field('state'),
-			zip: field('zip'),
-			country: field('country')
+			zip: field('zip')
 		};
 
 		try {

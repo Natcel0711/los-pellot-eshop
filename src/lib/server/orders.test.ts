@@ -7,11 +7,11 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { PaymentInfo, ShippingInfo } from '../types.ts';
+import type { PaymentInfo } from '../types.ts';
 import { createDb, type DB } from './db/client.ts';
 import { migrateDb } from './db/migrate.ts';
 import { cartItems, carts, categories, orders, payments, products } from './db/schema.ts';
-import { confirmPayment, createOrder, OrderError } from './orders.ts';
+import { confirmPayment, createOrder, OrderError, type ShippingInput } from './orders.ts';
 import { mockPaymentProvider, type PaymentProvider } from './payments.ts';
 
 let dir: string;
@@ -51,16 +51,15 @@ async function guestCart(...items: [productId: string, qty: number][]) {
 	return { owner: { userId: null, guestToken }, cartId: cart.id };
 }
 
-const shipping = (email = 'guest@example.com'): ShippingInfo => ({
+const shipping = (email = 'guest@example.com'): ShippingInput => ({
 	name: 'Test Buyer',
 	email,
 	phone: '555-0100',
 	address: '123 Main St',
 	apt: null,
-	city: 'City',
-	state: 'ST',
-	zip: '00000',
-	country: 'Puerto Rico'
+	city: 'San Juan',
+	state: 'PR',
+	zip: '00901'
 });
 
 const card = (number = '4242424242424242'): PaymentInfo => ({

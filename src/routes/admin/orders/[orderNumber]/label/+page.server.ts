@@ -40,6 +40,16 @@ export const load: PageServerLoad = async ({ params }) => {
 
 /** The store's return address, from the SHIP_FROM_* environment variables. */
 function shipFrom(): Address {
+	// Shippo quotes rates without a full address but refuses to sell them later,
+	// so stop here instead of at purchase.
+	const missing = ['STREET1', 'CITY', 'STATE', 'ZIP'].filter(
+		(k) => !env[`SHIP_FROM_${k}` as keyof typeof env]
+	);
+	if (missing.length > 0) {
+		throw new ShippingError(
+			`Falta la dirección de origen de la tienda. Configura ${missing.map((k) => 'SHIP_FROM_' + k).join(', ')} en las variables de entorno.`
+		);
+	}
 	return {
 		name: env.SHIP_FROM_NAME ?? 'Los Pellot LED and Accessories Distributors',
 		street1: env.SHIP_FROM_STREET1 ?? '',
