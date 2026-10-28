@@ -33,5 +33,15 @@ export const variables = defineEnvVars({
 	SHIP_FROM_ZIP: { description: 'Return address: ZIP.', schema: optional },
 	SHIP_FROM_COUNTRY: { description: 'Return address: country code.', schema: optional },
 	SHIP_FROM_PHONE: { description: 'Return address: phone.', schema: optional },
-	SHIP_FROM_EMAIL: { description: 'Return address: email.', schema: optional }
+	SHIP_FROM_EMAIL: { description: 'Return address: email.', schema: optional },
+	RESEND_API_KEY: {
+		description:
+			'Resend API key for order confirmation emails. When empty, emails are printed to the terminal instead of sent.',
+		schema: optional
+	},
+	EMAIL_FROM: {
+		description:
+			"Email sender, e.g. `Los Pellot <pedidos@lospellotled.com>` (domain verified in Resend). When empty, uses Resend's test sender, which only delivers to your own Resend account email.",
+		schema: optional
+	}
 });

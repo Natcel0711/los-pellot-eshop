@@ -5,7 +5,9 @@
 // order it is, so a page refresh lands back on the payment step.
 
 import { fail, type Cookies } from '@sveltejs/kit';
+import * as env from '$app/env/private';
 import { db } from '#lib/server/db/index.ts';
+import { orderConfirmationEmail, sendEmail } from '#lib/server/email.ts';
 import { confirmPayment, createOrder, getOrderForViewer, OrderError } from '#lib/server/orders.ts';
 import { paymentProvider } from '#lib/server/payments.ts';
 import type { Order, SimulateOutcome } from '#lib/types.ts';
@@ -122,7 +124,12 @@ export const actions: Actions = {
 				},
 				simulateOutcome: ['Succeed', 'Fail', 'Cancel'].includes(outcome)
 					? (outcome as SimulateOutcome)
-					: null
+					: null,
+				onPaid: (order) =>
+					sendEmail(
+						{ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM },
+						orderConfirmationEmail(order)
+					)
 			});
 		} catch (err) {
 			if (err instanceof OrderError) return fail(err.status, { error: err.message, retry: true });

@@ -316,6 +316,8 @@ export async function confirmPayment(
 		idempotencyKey: string | null;
 		card: PaymentInfo | null;
 		simulateOutcome: SimulateOutcome | null;
+		/** Runs once, only on the request that actually marks the order paid (e.g. the confirmation email). */
+		onPaid?: (order: Order) => Promise<unknown>;
 	}
 ): Promise<Order> {
 	const { idempotencyKey } = input;
@@ -469,5 +471,7 @@ export async function confirmPayment(
 		);
 	}
 
-	return current();
+	const paid = await current();
+	await input.onPaid?.(paid);
+	return paid;
 }
